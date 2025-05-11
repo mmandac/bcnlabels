@@ -79,11 +79,11 @@ def process_csv():
                 content_string = content_bytes.decode('utf-8')
             except UnicodeDecodeError:
                 return jsonify({'error': 'Error decoding CSV file. Please ensure it is UTF-8 encoded.'}), 400
-            
+
             csv_file_like_object = io.StringIO(content_string)
             reader = csv.DictReader(csv_file_like_object)
             # --- CORRECTED CSV FILE READING END ---
-            
+
             if not reader.fieldnames: # Check if CSV is empty or has no headers
                 return jsonify({'error': 'CSV file is empty or does not contain headers.'}), 400
 
@@ -128,14 +128,14 @@ def process_csv():
 
                     product_name_original = row.get('Product', '').strip()
                     variant_name_original = row.get('Variant', '').strip()
-                    
+
                     if not product_name_original: # Skip row if product name is missing
                         print(f"Warning: Skipping row {row_number} due to missing 'Product' name.")
                         continue
 
                     product_lookup = product_name_original.lower()
                     variant_lookup = variant_name_original.lower()
-                    
+
                     lookup_key = (product_lookup, variant_lookup)
                     nutrition_info = nutrition_prep_data.get(lookup_key, {})
 
@@ -176,7 +176,7 @@ def process_csv():
                     return jsonify({'error': f'Error processing row {row_number} (ValueError in data: {row}). Details: {e}. Please check data types (e.g., Quantity, Price).'}), 400
                 except Exception as e:
                     return jsonify({'error': f'Unexpected error processing row {row_number} ({row}). Details: {e}'}), 400
-            
+
             if not processed_rows and reader.fieldnames: # Headers existed but no data rows were processed
                 return jsonify({'error': 'CSV file contains headers but no data rows, or all rows were skipped.'}), 400
             if not labels_data and not processed_rows: # No data rows processed at all (might overlap with above)
@@ -184,7 +184,7 @@ def process_csv():
 
 
             return jsonify({'labels': labels_data, 'storage': storage_instruction })
-        
+
         except csv.Error as e: # Catches errors from csv.DictReader if headers are malformed etc.
              return jsonify({'error': f'Error parsing CSV structure: {e}. Please check CSV format.'}), 400
         except Exception as e:
@@ -192,7 +192,7 @@ def process_csv():
             import traceback
             traceback.print_exc()
             return jsonify({'error': f'An unexpected error occurred: {e}'}), 500
-            
+
     return jsonify({'error': 'Invalid file format. Only CSV files are allowed.'}), 400
 
 # --- Route for displaying and editing nutrition data ---
@@ -209,7 +209,7 @@ def edit_data_page():
             for row in reader:
                 row_to_add = {field: row.get(field, '') for field in fieldnames}
                 data_rows.append(row_to_add)
-        
+
         if not data_rows and not os.path.exists(NUTRITION_PREP_FILE):
              error_message = f"{NUTRITION_PREP_FILE} not found. Add products and save to create it."
         elif not data_rows and actual_fieldnames_from_csv:
@@ -230,7 +230,7 @@ def edit_data_page():
 def save_data():
     try:
         data_to_save = request.get_json()
-        
+
         if not isinstance(data_to_save, list):
             return jsonify({'status': 'error', 'message': 'Invalid data format.'}), 400
 
@@ -245,7 +245,7 @@ def save_data():
                     writer.writerow(filtered_row)
                 else:
                     print(f"Skipping non-dictionary row during save: {row_data}")
-        
+
         global nutrition_prep_data
         nutrition_prep_data = load_nutrition_prep_data()
 
@@ -261,5 +261,5 @@ def save_data():
 if __name__ == '__main__':
     # For local development, you can set debug=True
     # For production on PythonAnywhere, this app.run() part is not used.
-    # PythonAnywhere uses Gunicorn (or another WSGI server) to run the 'app' object.
-    app.run(debug=True)
+    # PythonAnywhere uses Gunicorn (or another WSGI server)
+    app.run(debug=True)  # Indented!
