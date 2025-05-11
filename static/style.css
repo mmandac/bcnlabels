@@ -218,7 +218,6 @@ hr {
     margin-right: auto;
 }
 
-/* NEW CLASS for the vacuum sealed message */
 .vacuum-sealed-message {
     text-align: center;
     font-size: 0.8em; /* MODIFIED for website */
@@ -240,11 +239,10 @@ hr {
     margin-top: 0;
 }
 
-/* Pagination Controls Styles (add to your style.css) */
 #pagination-controls {
     text-align: center;
     margin-top: 20px;
-    margin-bottom: 20px; /* Added some bottom margin */
+    margin-bottom: 20px; 
 }
 
 .pagination-button {
@@ -269,71 +267,49 @@ hr {
 
 .page-info-span {
     margin: 0 15px;
-    font-size: 1em; /* Or your preferred size, e.g., 0.9em */
-    vertical-align: middle; /* Aligns text nicely with buttons */
+    font-size: 1em; 
+    vertical-align: middle; 
 }
 .btn {
-  padding: 10px 15px; /* This matches the padding from edit_data.html buttons */
+  padding: 10px 15px; 
   cursor: pointer;
   border: none;
   border-radius: 4px;
-  color: white; /* Assuming white text for all colored buttons */
+  color: white; 
   text-align: center;
-  display: inline-block; /* Allows padding and makes label behave like a button */
-  text-decoration: none; /* In case used on <a> tags or labels acting as buttons */
-  font-size: 1em; /* Adjust as needed to match other text */
-  line-height: 1.2; /* Adjust for better vertical alignment of text */
-  /* remove individual margins if using 'gap' in a flex container */
+  display: inline-block; 
+  text-decoration: none; 
+  font-size: 1em; 
+  line-height: 1.2; 
 }
 
-/* Green Button */
 .btn-green {
-  background-color: #28a745; /* Green */
+  background-color: #28a745; 
 }
 .btn-green:hover {
-  background-color: #1e7e34; /* Darker green */
+  background-color: #1e7e34; 
 }
 
-/* Blue Button */
 .btn-blue {
-  background-color: #007bff; /* Blue */
+  background-color: #007bff; 
 }
 .btn-blue:hover {
-  background-color: #0056b3; /* Darker blue */
+  background-color: #0056b3; 
 }
 
-/* Red Button */
 .btn-red {
-  background-color: #dc3545; /* Red */
+  background-color: #dc3545; 
 }
 .btn-red:hover {
-  background-color: #c82333; /* Darker red */
+  background-color: #c82333; 
 }
 
-/* Styling for the hidden file input's label */
-/* This ensures the label itself uses the .btn styles correctly */
 #csv_file_label { 
-  /* Inherits .btn and color class, e.g. .btn-green */
 }
 
-/* Hide the default file input */
 #csv_file {
   display: none;
 }
-
-/* Optional: Style the button container further if needed */
-/* The existing style for .button-container with display:flex and gap should work well. */
-/* .button-container {
-    display: flex;
-    align-items: center; // Vertically align items if they have different heights
-    gap: 10px; // Spacing between buttons
-} */
-
-/* Print styles */
-@media print {
-    body * {
-        visibility: hidden;
-    }
 
 /* Print styles */
 @media print {
@@ -470,4 +446,87 @@ hr {
         display: flex;
         justify-content: space-between;
         align-items: baseline; 
-        width:
+        width: 95%; /* Ensures it uses the full width within its container */
+        margin: 0.01in auto; /* Adjust vertical margin and center it */
+        font-size: 1em; /* Consistent font size */
+    }
+}
+
+
+/* --- START: Modal CSS --- */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 1000; 
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; 
+  background-color: rgba(0,0,0,0.4); 
+  padding-top: 30px;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 2% auto; 
+  padding: 0;
+  border: 1px solid #888;
+  width: 90%; 
+  max-width: 1000px; 
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+
+@keyframes animatetop {
+  from {top: -300px; opacity: 0}
+  to {top: 0; opacity: 1}
+}
+
+.close-button {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  padding: 0px 12px;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-header {
+  padding: 10px 16px; 
+  background-color: #c82333; 
+  color: white;
+  border-bottom: 1px solid #ddd;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.1em; 
+}
+
+.modal-body {
+  padding: 10px 16px; 
+}
+.modal-body iframe {
+  display: block; 
+}
+
+.modal-footer {
+  padding: 10px 16px;
+  background-color: #f9f9f9; 
+  color: #333;
+  border-top: 1px solid #eee;
+  text-align: right;
+}
+.modal-footer h3 {
+  margin: 0;
+  font-size: 0.9em;
+}
+/* --- END: Modal CSS --- */
