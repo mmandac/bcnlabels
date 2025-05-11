@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+# Replace 'venv' with the name of your virtual environment folder if it's different
+venv/ 
+venvPA/ # If you created one with this name for PythonAnywhere locally
+
+# Instance folder (if you use one for Flask configuration)
+instance/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# User-uploaded files or sensitive data (if any, not directly applicable yet but good to know)
+# For example, if you had a local database file you didn't want to commit:
+# local_database.db

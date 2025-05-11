@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product List & Macros</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .actions { margin-bottom: 20px; }
+        button { padding: 10px 15px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; margin-right: 10px; }
+        button:hover { background-color: #0056b3; }
+        .add-row-btn { background-color: #28a745; }
+        .add-row-btn:hover { background-color: #1e7e34; }
+        /* .delete-row-btn related styles can be removed if not used elsewhere */
+        input[type="text"], input[type="number"] { width: 95%; padding: 6px; box-sizing: border-box; }
+        .message { padding: 10px; margin-bottom: 15px; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <h1>Product List & Macros</h1>
+
+    <div id="message-container"></div>
+
+    <div class="actions">
+        <button onclick="saveData()">Save Changes</button>
+        <button onclick="addRow()" class="add-row-btn">Add New Product</button>
+    </div>
+
+    <table id="dataTable">
+        <thead>
+            <tr>
+                {% if headers %}
+                    {% for header in headers %}
+                        <th>{{ header }}</th>
+                    {% endfor %}
+                    {# Removed "Actions" header #}
+                {% else %}
+                    <th>Product</th>
+                    <th>Variant</th>
+                    <th>Calories</th>
+                    <th>Protein</th>
+                    <th>Carbs</th>
+                    <th>Fat</th>
+                    <th>How to Prepare</th>
+                    {# Removed "Actions" and "Expiry Days" from fallback #}
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% if data %}
+                {% for row in data %}
+                <tr>
+                    {% for header in headers %}
+                    <td><input type="text" name="{{ header }}" value="{{ row[header] | default('', true) }}"></td>
+                    {% endfor %}
+                    {# Removed delete button cell #}
+                </tr>
+                {% endfor %}
+            {% elif error_message %}
+                <tr id="errorMessageRow">
+                    <td colspan="{{ headers|length if headers else 7 }}" style="color: red;">{{ error_message }} Click "Add New Product" to create the file.</td>
+                </tr>
+            {% else %}
+                <tr id="noDataMessageRow">
+                    <td colspan="{{ headers|length if headers else 7 }}">No data available. Click "Add New Product" to start.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <script>
+        // 'headers' from Flask will no longer include 'Expiry Days'
+        const tableHeaders = {{ headers | tojson | safe if headers else ['Product', 'Variant', 'Calories', 'Protein', 'Carbs', 'Fat', 'How to Prepare'] | tojson | safe }};
+
+        function addRow() {
+            const tableBody = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+            // Insert the new row at the beginning of the table body (index 0)
+            const newRow = tableBody.insertRow(0); // MODIFIED LINE
+            
+            tableHeaders.forEach(header => {
+                const cell = newRow.insertCell();
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.name = header;
+                cell.appendChild(input);
+            });
+
+            // Remove "No data available" or "Error" message row if it exists
+            // This logic should still work fine as it removes by ID
+            const noDataRow = document.getElementById('noDataMessageRow');
+            if (noDataRow) {
+                noDataRow.remove();
+            }
+            const errorRow = document.getElementById('errorMessageRow');
+            if (errorRow) {
+                errorRow.remove();
+            }
+        }
+
+        // deleteRow function is no longer needed and can be removed
+        // function deleteRow(button) { ... }
+
+        async function saveData() {
+    const table = document.getElementById('dataTable');
+    const rows = table.getElementsByTagName('tbody')[0].rows;
+    const dataToSave = [];
+    const productVariantCombinations = new Set(); // To detect duplicates
+    const messageContainer = document.getElementById('message-container');
+    messageContainer.innerHTML = ''; // Clear previous messages
+
+    // First pass: Collect data and check for duplicates
+    for (let i = 0; i < rows.length; i++) {
+        if (rows[i].id === 'noDataMessageRow' || rows[i].id === 'errorMessageRow') {
+            continue; // Skip placeholder rows
+        }
+
+        const cells = rows[i].cells;
+        const rowData = {};
+        let currentProduct = '';
+        let currentVariant = ''; // Variant can be empty
+        let currentProductOriginalCase = ''; // For the error message
+        let currentVariantOriginalCase = ''; // For the error message
+        let isEmptyRow = true;
+
+        for (let j = 0; j < tableHeaders.length; j++) {
+            const header = tableHeaders[j];
+            const inputElement = cells[j].getElementsByTagName('input')[0];
+            let value = '';
+
+            if (inputElement) {
+                value = inputElement.value;
+                rowData[header] = value; // Store with original case for saving
+                if (value.trim() !== '') {
+                    isEmptyRow = false;
+                }
+            } else {
+                rowData[header] = ''; // Should not happen if table is structured correctly
+            }
+
+            // For duplicate checking, use trimmed and lowercased values
+            if (header === 'Product') {
+                currentProductOriginalCase = value; // Keep original for message
+                currentProduct = value.trim().toLowerCase();
+            } else if (header === 'Variant') {
+                currentVariantOriginalCase = value; // Keep original for message
+                currentVariant = value.trim().toLowerCase();
+            }
+        }
+
+        if (!isEmptyRow) {
+            // A product name is essential for a valid entry to check for duplication
+            if (currentProduct) { // Only check if Product name is not empty
+                const combinationKey = currentProduct + '||' + currentVariant; // '||' as a separator
+
+                if (productVariantCombinations.has(combinationKey)) {
+                    // Duplicate found
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'message error';
+                    // Using your requested error message:
+                    messageDiv.textContent = `Product "${currentProductOriginalCase}" and variant "${currentVariantOriginalCase || ''}" already exists! Please search for the product and update it.`;
+                    messageContainer.appendChild(messageDiv);
+                    return; // Abort save
+                }
+                productVariantCombinations.add(combinationKey);
+                dataToSave.push(rowData); // Add valid, non-duplicate rowData
+            } else if (!currentProduct && !isEmptyRow) {
+                // Optional: Handle rows that are not empty but lack a product name
+                // For now, we just don't add them to productVariantCombinations or dataToSave if product is empty
+                // Or, you could show an error message if a product name is required for all non-empty rows.
+            }
+        }
+    }
+
+    // If loop completes, no duplicates were found among non-empty rows with product names.
+    // Proceed to send dataToSave to the server.
+
+    // If dataToSave is empty at this point (e.g., all rows were empty or only placeholder rows)
+    // you might want to prevent sending an empty array, or handle it as needed.
+    // For now, it will send an empty array if no valid data rows were found.
+
+    try {
+        const response = await fetch("{{ url_for('save_data') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataToSave),
+        });
+        const result = await response.json();
+
+        const messageDiv = document.createElement('div');
+        messageDiv.textContent = result.message;
+        if (result.status === 'success') {
+            messageDiv.className = 'message success';
+        } else {
+            messageDiv.className = 'message error';
+        }
+        messageContainer.appendChild(messageDiv);
+
+    } catch (error) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message error';
+        messageDiv.textContent = 'Error saving data: ' + error;
+        messageContainer.appendChild(messageDiv);
+    }
+}
+    </script>
+</body>
+</html>

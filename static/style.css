@@ -1,0 +1,473 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    font-size: 1em; /* Base font size for em calculations (around 12pt) */
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.branding-selector {
+    margin-bottom: 10px;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+#labels_container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* Keeps labels aligned to the start of each 960px line */
+    gap: 0;
+    width: 960px; /* ADDED: 5 labels * 192px per label */
+    margin-left: auto; /* ADDED: To center the 960px container on the page */
+    margin-right: auto; /* ADDED: To center the 960px container on the page */
+}
+
+#print_button {
+    padding: 8px 15px;
+    cursor: pointer;
+}
+
+.meal-label {
+    position: relative;
+    border: 1px solid #ccc;
+    padding: 0.5em; 
+    width: 192px; 
+    height: 384px; 
+    box-sizing: border-box;
+    margin-bottom: 0; 
+    font-size: 8pt; 
+    text-align: center;
+    overflow: hidden; 
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: space-between; 
+}
+
+.generation-date {
+    font-size: .8em; 
+    color: #777;
+    text-align: right;
+    width: 100%; 
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 0.3em; 
+    height: 0.75in; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    width: 80%; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.logo-container img {
+    max-height: 100%;
+    max-width: 90%; 
+    height: auto;
+    width: auto;
+    object-fit: contain; 
+}
+
+.meal-label h3 { 
+    margin-top: 0.1em; 
+    margin-bottom: 0.2em; 
+    font-size: 1em; 
+    text-align: center; 
+    font-weight: bold; 
+    width: 90%; 
+    margin-left: auto;
+    margin-right: auto;
+    word-break: break-word; 
+}
+
+.product-info { 
+    text-align: center; 
+    margin-top: 0.2em;
+    margin-bottom: 0.1em; 
+    font-size: 1em; 
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    word-break: break-word;
+    font-weight: bold; 
+}
+
+.variant-info { 
+    text-align: center;
+    font-size: 1em; 
+    margin-top: 0.05em; 
+    margin-bottom: 0.05em; 
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    word-break: break-word;
+}
+
+.modifiers-value { 
+    text-align: center; 
+    font-size: 1em; 
+    margin-top: 0.05em; 
+    margin-bottom: 0.1em; 
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    word-break: break-word;
+}
+
+.customer-price-line { 
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline; 
+    width: 90%; 
+    margin: 0.1em auto; 
+    font-size: 1em; 
+}
+
+.customer-name-display { 
+    text-align: left;
+    font-weight: normal; 
+}
+
+.price-display { 
+    text-align: right;
+}
+
+.meal-label strong {
+    font-weight: bold; 
+}
+
+.meal-label p { 
+    text-align: left;
+    margin-top: 0.1em;
+    margin-bottom: 0.05em; 
+    font-size: 1em; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: baseline; 
+    width: 90%;
+}
+
+.meal-label p .dots {
+    flex-grow: 1; 
+    border-bottom: 1px dotted black; 
+    margin: 0 0.3em; 
+    height: 1em; 
+}
+
+hr {
+    margin-top: 0.2em; 
+    margin-bottom: 0.2em; 
+    border: 0;
+    border-top: 1px solid #eee;
+    width: 95%; 
+}
+
+.nutrition-header {
+    font-weight: bold;
+    text-align: center;
+    margin-top: 0.2em; 
+    margin-bottom: 0.2em; 
+    font-size: 1em; 
+    width: 90%;
+}
+
+.nutrition-underline {
+    border-top: 1px solid black;
+    margin-top: 0.1em;
+    margin-bottom: 0.1em;
+    width: 95%; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.preparation-header {
+    text-align: center; 
+    font-weight: bold;
+    margin-top: 0.3em; 
+    margin-bottom: 0.1em;
+    font-size: 1em; 
+    width: 90%;
+}
+
+.preparation-value { /* MODIFIED for website */
+    text-align: center; 
+    font-size: 0.8em; /* Changed from 1em for website */
+    margin-bottom: 0.1em; 
+    width: 90%;
+    word-break: break-word;
+}
+
+.preparation-underline {
+    border-top: 1px solid black;
+    margin-top: 0.1em;
+    margin-bottom: 0.1em; 
+    width: 95%; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* NEW CLASS for the vacuum sealed message */
+.vacuum-sealed-message {
+    text-align: center;
+    font-size: 0.8em; /* MODIFIED for website */
+    margin-bottom: 0.3em;
+    width: 90%; /* Adding for consistency with other text blocks */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.expiry-group {
+    margin-top: auto; 
+    width: 100%;
+}
+
+.expiry {
+    text-align: center;
+    font-size: .7em; 
+    width: 90%;
+    margin-top: 0;
+}
+
+/* Pagination Controls Styles (add to your style.css) */
+#pagination-controls {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px; /* Added some bottom margin */
+}
+
+.pagination-button {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 8px 16px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.pagination-button:hover {
+    background-color: #e0e0e0;
+}
+
+.pagination-button:disabled {
+    background-color: #f8f8f8;
+    color: #bbb;
+    cursor: not-allowed;
+    border-color: #ddd;
+}
+
+.page-info-span {
+    margin: 0 15px;
+    font-size: 1em; /* Or your preferred size, e.g., 0.9em */
+    vertical-align: middle; /* Aligns text nicely with buttons */
+}
+.btn {
+  padding: 10px 15px; /* This matches the padding from edit_data.html buttons */
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  color: white; /* Assuming white text for all colored buttons */
+  text-align: center;
+  display: inline-block; /* Allows padding and makes label behave like a button */
+  text-decoration: none; /* In case used on <a> tags or labels acting as buttons */
+  font-size: 1em; /* Adjust as needed to match other text */
+  line-height: 1.2; /* Adjust for better vertical alignment of text */
+  /* remove individual margins if using 'gap' in a flex container */
+}
+
+/* Green Button */
+.btn-green {
+  background-color: #28a745; /* Green */
+}
+.btn-green:hover {
+  background-color: #1e7e34; /* Darker green */
+}
+
+/* Blue Button */
+.btn-blue {
+  background-color: #007bff; /* Blue */
+}
+.btn-blue:hover {
+  background-color: #0056b3; /* Darker blue */
+}
+
+/* Red Button */
+.btn-red {
+  background-color: #dc3545; /* Red */
+}
+.btn-red:hover {
+  background-color: #c82333; /* Darker red */
+}
+
+/* Styling for the hidden file input's label */
+/* This ensures the label itself uses the .btn styles correctly */
+#csv_file_label { 
+  /* Inherits .btn and color class, e.g. .btn-green */
+}
+
+/* Hide the default file input */
+#csv_file {
+  display: none;
+}
+
+/* Optional: Style the button container further if needed */
+/* The existing style for .button-container with display:flex and gap should work well. */
+/* .button-container {
+    display: flex;
+    align-items: center; // Vertically align items if they have different heights
+    gap: 10px; // Spacing between buttons
+} */
+
+/* Print styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+/* Print styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #labels_container, #labels_container * {
+        visibility: visible;
+    }
+
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        font-size: 8pt; 
+    }
+
+    @page {
+        size: landscape;
+        margin: 0.1in; 
+        padding: 0;
+    }
+
+    #labels_container {
+        position: absolute;
+        width: 10in;  
+        height: 8in; 
+        left: 0.5in; 
+        top: 0.25in; 
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start; 
+        align-content: flex-start;   
+        margin: 0 !important;
+        padding: 0 !important;
+        gap: 0; 
+    }
+
+    .meal-label { 
+        border: 1px solid #ccc;
+        padding: 0.02in !important;
+        width: 2in;
+        height: 4in;
+        box-sizing: border-box;
+        font-size: 8pt; 
+        text-align: center;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin: 0 !important;
+    }
+
+    .meal-label-page-break {
+        page-break-after: always;
+    }
+
+    .generation-date { /* Print */
+        font-size: 1em; 
+        color: #777;
+        text-align: right;
+        width: 100%;
+    }
+
+    .logo-container { /* Print */
+        text-align: center;
+        height: 0.75in;
+        overflow: hidden;
+        margin-bottom: 0.01in;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80%;
+    }
+
+    .logo-container img { /* Print */
+        max-height: 100%;
+        max-width: 90%;
+        height: auto;
+        width: auto;
+        object-fit: contain;
+    }
+    
+    .meal-label h3 { /* Print */
+        font-size: 1em; 
+        font-weight: bold; 
+        width: 95%; 
+        margin-left: auto;
+        margin-right: auto;
+        word-break: break-word;
+        margin-top: 0.01in;
+        margin-bottom: 0.01in;
+    }
+
+    .product-info { /* Print */
+        text-align: center; 
+        font-size: 1em; 
+        font-weight: bold; 
+        width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+        word-break: break-word;
+        margin-top: 0.01in;
+        margin-bottom: 0.01in;
+    }
+
+    .variant-info { /* Print */
+        text-align: center;
+        font-size: 1em; 
+        width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+        word-break: break-word;
+        margin-top: 0.005in;
+        margin-bottom: 0.005in;
+    }
+
+    .modifiers-value { /* Print */
+        text-align: center; 
+        font-size: 1em; 
+        width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+        word-break: break-word;
+        margin-top: 0.005in;
+        margin-bottom: 0.01in;
+    }
+
+    .customer-price-line { /* Print */
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline; 
+        width:

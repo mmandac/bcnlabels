@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Beast Coast Label Generator</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Beast Coast Label Generator</h1>
+
+    <div class="button-container">
+        <input type="file" id="csv_file" name="csv_file" accept=".csv"> 
+        <label for="csv_file" id="csv_file_label" class="btn btn-green">Choose File</label>
+        <span id="file_name_display" style="margin-left: 10px; vertical-align: middle;">No file chosen</span> 
+
+        <button onclick="generateLabels()" class="btn btn-green">Generate Labels</button>
+        <button id="print_button" onclick="printLabels()" class="btn btn-blue">Print Labels</button>
+        <button id="edit-macros-button" onclick="openMacroEditor()" class="btn btn-red">Product List/Macros</button>
+    </div>
+
+    <div id="labels_container">
+        </div>
+
+    <div id="pagination-controls">
+        </div>
+
+    <script>
+        let allLabelsData = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let globalStorageInstruction = '';
+
+        // Function to build HTML for a single label for web display
+        function buildLabelHtml(label, storageInstruction) {
+            let labelClasses = "meal-label"; 
+            return `
+                <div class="${labelClasses}">
+                    <div class="generation-date">${label.generation_date}</div>
+                    ${label.logo_url ? `<div class="logo-container"><img src="${label.logo_url}" alt="Company Logo"></div>` : ''}
+                    <div class="product-info">${label.product}</div>
+                    ${label.variant ? `<div class="variant-info">${label.variant}</div>` : ''}
+                    ${label.modifiers ? `<div class="modifiers-value">${label.modifiers}</div>` : ''}
+                    <div class="customer-price-line">
+                        <div class="customer-name-display">${label.customer_first_name} ${label.customer_last_name}</div>
+                        ${label.price !== undefined && label.price !== null && label.price !== '' ? `<div class="price-display">$${label.price}</div>` : '<div class="price-display"></div>'}
+                    </div>
+                    <hr>
+                    <div class="nutrition-underline"></div>
+                    <div class="nutrition-header">Nutritional Information</div>
+                    <div class="nutrition-underline"></div>
+                    ${label.calories ? `<p><strong>Calories</strong><span class="dots"></span><span>${label.calories}</span></p>` : ''}
+                    ${label.protein ? `<p><strong>Protein</strong><span class="dots"></span><span>${label.protein}</span></p>` : ''}
+                    ${label.carbs ? `<p><strong>Carbs</strong><span class="dots"></span><span>${label.carbs}</span></p>` : ''}
+                    ${label.fat ? `<p><strong>Fat</strong><span class="dots"></span><span>${label.fat}</span></p>` : ''}
+                    <div class="nutrition-underline"></div>
+                    <div class="preparation-header">How to Prepare</div>
+                    <div class="preparation-value">${label.preparation}</div>
+                    <div class="preparation-underline"></div>
+                    <div style="font-size: 8pt; text-align: center; margin-bottom: 0.2em;">
+                        <strong>Storage</strong>
+                        <div>${storageInstruction || ''}</div>
+                    </div>
+                    <div class="vacuum-sealed-message">
+                        Each meal is vacuum sealed for freshness; storing at 34F or lower extends <strong>use & best by date</strong> up to an extra 10+ days.
+                    </div>
+                    <div class="expiry-group"> 
+                        <div class="preparation-underline"></div> 
+                        <div class="expiry"><strong>Use & Best By:</strong> ${label.expiry_date}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function buildLabelHtmlForPrint(label, storageInstruction, customLabelClasses) {
+            return `
+                <div class="${customLabelClasses}">
+                    <div class="generation-date">${label.generation_date}</div>
+                    ${label.logo_url ? `<div class="logo-container"><img src="${label.logo_url}" alt="Company Logo"></div>` : ''}
+                    <div class="product-info">${label.product}</div>
+                    ${label.variant ? `<div class="variant-info">${label.variant}</div>` : ''}
+                    ${label.modifiers ? `<div class="modifiers-value">${label.modifiers}</div>` : ''}
+                    <div class="customer-price-line">
+                        <div class="customer-name-display">${label.customer_first_name} ${label.customer_last_name}</div>
+                        ${label.price !== undefined && label.price !== null && label.price !== '' ? `<div class="price-display">$${label.price}</div>` : '<div class="price-display"></div>'}
+                    </div>
+                    <hr>
+                    <div class="nutrition-underline"></div>
+                    <div class="nutrition-header">Nutritional Information</div>
+                    <div class="nutrition-underline"></div>
+                    ${label.calories ? `<p><strong>Calories</strong><span class="dots"></span><span>${label.calories}</span></p>` : ''}
+                    ${label.protein ? `<p><strong>Protein</strong><span class="dots"></span><span>${label.protein}</span></p>` : ''}
+                    ${label.carbs ? `<p><strong>Carbs</strong><span class="dots"></span><span>${label.carbs}</span></p>` : ''}
+                    ${label.fat ? `<p><strong>Fat</strong><span class="dots"></span><span>${label.fat}</span></p>` : ''}
+                    <div class="nutrition-underline"></div>
+                    <div class="preparation-header">How to Prepare</div>
+                    <div class="preparation-value">${label.preparation}</div>
+                    <div class="preparation-underline"></div>
+                    <div style="font-size: 8pt; text-align: center; margin-bottom: 0.2em;">
+                        <strong>Storage</strong>
+                        <div>${storageInstruction || ''}</div>
+                    </div>
+                    <div class="vacuum-sealed-message">
+                        Each meal is vacuum sealed for freshness; storing at 34F or lower extends <strong>use & best by date</strong> up to an extra 10+ days.
+                    </div>
+                    <div class="expiry-group"> 
+                        <div class="preparation-underline"></div> 
+                        <div class="expiry"><strong>Use & Best By:</strong> ${label.expiry_date}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function generateLabels() {
+            const fileInput = document.getElementById('csv_file');
+            const labelsContainer = document.getElementById('labels_container');
+            const file = fileInput.files[0];
+            const branding = 'beast_coast';
+
+            labelsContainer.innerHTML = '';
+            let paginationControlsDiv = document.getElementById('pagination-controls');
+            if (paginationControlsDiv) {
+                paginationControlsDiv.innerHTML = '';
+            }
+            allLabelsData = []; 
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('csv_file', file);
+                formData.append('branding', branding);
+
+                try {
+                    const response = await fetch("{{ url_for('process_csv') }}", {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+
+                    if (data.error) {
+                        labelsContainer.innerHTML = `<p class="error">${data.error}</p>`;
+                    } else if (data.labels && data.labels.length > 0) {
+                        allLabelsData = data.labels; 
+                        globalStorageInstruction = data.storage || ''; 
+                        currentPage = 1; 
+                        renderPaginationControls();
+                        displayCurrentPage();
+                        document.getElementById('print_button').style.display = 'inline-block';
+                    } else {
+                        labelsContainer.innerHTML = '<p>No labels to generate from the CSV.</p>';
+                        document.getElementById('print_button').style.display = 'none';
+                    }
+                } catch (e) {
+                    labelsContainer.innerHTML = `<p class="error">Error fetching or processing labels: ${e.toString()}</p>`;
+                    console.error("Fetch error:", e);
+                    document.getElementById('print_button').style.display = 'none';
+                }
+            } else {
+                labelsContainer.innerHTML = '<p>Please select a CSV file.</p>';
+                document.getElementById('print_button').style.display = 'none';
+            }
+        }
+
+        function renderPaginationControls() {
+            let controlsContainer = document.getElementById('pagination-controls');
+            const totalPages = Math.ceil(allLabelsData.length / itemsPerPage);
+
+            if (totalPages <= 1) { 
+                controlsContainer.innerHTML = '';
+                return;
+            }
+            
+            controlsContainer.innerHTML = `
+                <button id="prev-page" class="pagination-button">Previous</button>
+                <span id="page-info" class="page-info-span"></span>
+                <button id="next-page" class="pagination-button">Next</button>
+            `;
+
+            document.getElementById('prev-page').addEventListener('click', prevPage);
+            document.getElementById('next-page').addEventListener('click', nextPage);
+            updatePaginationInfo();
+        }
+
+        function displayCurrentPage() {
+            const labelsContainer = document.getElementById('labels_container');
+            labelsContainer.innerHTML = ''; 
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const labelsToShow = allLabelsData.slice(startIndex, endIndex);
+
+            let labelsHTML = '';
+            labelsToShow.forEach(label => {
+                labelsHTML += buildLabelHtml(label, globalStorageInstruction);
+            });
+            labelsContainer.innerHTML = labelsHTML;
+
+            updatePaginationInfo();
+        }
+
+        function updatePaginationInfo() {
+            const totalPages = Math.ceil(allLabelsData.length / itemsPerPage);
+            const pageInfoSpan = document.getElementById('page-info');
+            const prevButton = document.getElementById('prev-page');
+            const nextButton = document.getElementById('next-page');
+
+            if (pageInfoSpan) {
+                if (totalPages > 0) {
+                    pageInfoSpan.textContent = `Page ${currentPage} of ${totalPages}`;
+                } else {
+                    pageInfoSpan.textContent = '';
+                }
+            }
+            if (prevButton) {
+                prevButton.disabled = currentPage === 1;
+            }
+            if (nextButton) {
+                nextButton.disabled = currentPage === totalPages || totalPages === 0;
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayCurrentPage();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(allLabelsData.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayCurrentPage();
+            }
+        }
+        
+        function printLabels() {
+            if (!allLabelsData || allLabelsData.length === 0) {
+                alert("No labels to print. Please generate labels first.");
+                return;
+            }
+
+            const originalLabelsContainerContent = document.getElementById('labels_container').innerHTML;
+            const originalPaginationControlsContent = document.getElementById('pagination-controls').innerHTML;
+            
+            const labelsContainer = document.getElementById('labels_container');
+            const paginationControls = document.getElementById('pagination-controls');
+
+            let allLabelsPrintHTML = '';
+            allLabelsData.forEach((label, index) => {
+                let labelClasses = "meal-label";
+                if ((index + 1) % itemsPerPage === 0 && (index + 1) < allLabelsData.length) {
+                    labelClasses += " meal-label-page-break";
+                }
+                allLabelsPrintHTML += buildLabelHtmlForPrint(label, globalStorageInstruction, labelClasses);
+            });
+
+            paginationControls.style.display = 'none';
+            labelsContainer.innerHTML = allLabelsPrintHTML;
+
+            setTimeout(function() {
+                window.print();
+                labelsContainer.innerHTML = originalLabelsContainerContent;
+                paginationControls.innerHTML = originalPaginationControlsContent;
+                paginationControls.style.display = 'block'; 
+
+                if (Math.ceil(allLabelsData.length / itemsPerPage) > 1) {
+                    // Safely try to re-add listeners
+                    const prevBtn = document.getElementById('prev-page');
+                    const nextBtn = document.getElementById('next-page');
+                    if (prevBtn) prevBtn.addEventListener('click', prevPage);
+                    if (nextBtn) nextBtn.addEventListener('click', nextPage);
+                }
+                // Ensure pagination info is correct after restoring
+                 updatePaginationInfo(); 
+            }, 50);
+        }
+
+        function openMacroEditor() {
+            window.open("{{ url_for('edit_data_page') }}", "_blank");
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const printButton = document.getElementById('print_button');
+            if(printButton) {
+                printButton.style.display = 'none';
+            }
+
+            // --- NEW: Code to display selected filename ---
+            const fileInput = document.getElementById('csv_file');
+            const fileNameDisplay = document.getElementById('file_name_display');
+
+            if (fileInput && fileNameDisplay) {
+                fileInput.addEventListener('change', function() {
+                    // Check if a file was selected
+                    if (fileInput.files.length > 0) {
+                        // Display the name of the first selected file
+                        fileNameDisplay.textContent = fileInput.files[0].name;
+                    } else {
+                        // If no file is selected (e.g., user canceled), reset the text
+                        fileNameDisplay.textContent = 'No file chosen';
+                    }
+                });
+            }
+            // --- END NEW Code ---
+        });
+    </script>
+</body>
+</html>
