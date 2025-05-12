@@ -1,3 +1,4 @@
+/* style.css */
 body {
     font-family: sans-serif;
     margin: 0;
@@ -472,7 +473,7 @@ hr { /* Horizontal rule within label */
         margin: 0 !important;
         padding: 0 !important;
         background-color: white !important; /* Ensure white background for printing */
-        -webkit-print-color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important; /* Added for WebKit */
         print-color-adjust: exact !important;
         font-size: 8pt !important; /* Base font size for print */
     }
@@ -504,31 +505,30 @@ hr { /* Horizontal rule within label */
     }
 
     #labels_container {
-        position: static !important; /* Let it flow naturally on print */
+        /* position: static !important; */ /* Removed to allow flex to manage positioning if needed */
         display: flex !important;
         flex-wrap: wrap !important;
-        justify-content: flex-start !important; /* Align to start for consistent layout on sheet */
-        align-content: flex-start !important;
-        width: 100% !important; /* Take full width of the @page content area */
+        justify-content: flex-start !important;
+        align-content: flex-start !important; /* MODIFIED: from align-items */
+        width: 100% !important;
         height: auto !important;
         margin: 0 !important;
-        padding: 0 !important; /* Container itself has no padding */
+        padding: 0 !important;
         /* gap: 0 !important; */ /* Gap removed, label margins will control spacing */
-        orphans: 2; /* Minimum lines at bottom of page before break */
-        widows: 2;  /* Minimum lines at top of page after break */
+        orphans: 2;
+        widows: 2;
     }
 
     .meal-label {
-        border: 1px solid #ccc !important; /* Or set to none if labels are pre-cut and guides are not needed */
-        padding: 1em !important;    /* UPDATED: Increased padding for print */
-        margin: 0.5em !important;   /* UPDATED: Added margin for print */
-        width: 2in !important;      /* Avery 5168/8168 width */
-        height: 4in !important;     /* Avery 5168/8168 height */
-        box-sizing: border-box !important;
+        border: 1px solid #ccc !important;
+        padding: 0.5em !important;    /* Kept padding as em for internal spacing */
+        margin: 4pt !important;   /* MODIFIED: from 0.5em to 4pt */
+        width: 2in !important;
+        height: 4in !important;
+        box-sizing: border-box !important; /* ADDED: Explicitly for print */
         font-size: 8pt !important;
         overflow: hidden !important;
-        page-break-inside: avoid !important; /* Try to keep each label on one page */
-        /* Ensure flex properties from screen are still active if needed, or redefine */
+        page-break-inside: avoid !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -536,13 +536,25 @@ hr { /* Horizontal rule within label */
         background-color: white !important;
     }
      .meal-label-page-break {
-        page-break-after: always !important; /* Force page break after this label */
+        page-break-after: always !important;
     }
 
+    /* Logo container and image adjustments */
+    .logo-container {
+        height: 0.75in !important;
+        width: 90% !important; /* MODIFIED: Set explicit width */
+        margin-left: auto !important; /* ADDED: for centering */
+        margin-right: auto !important; /* ADDED: for centering */
+        /* margin-bottom: 0.3em; /* This was screen style, ensure print specific if needed or rely on flex spacing */
+    }
+    .logo-container img {
+        max-height: 100% !important;
+        max-width: 100% !important; /* MODIFIED: to 100% of its container */
+        object-fit: contain !important;
+    }
 
-    .logo-container { height: 0.75in !important; }
-    .logo-container img { max-height: 100% !important; max-width: 90% !important;}
-    .meal-label h3 { font-size: 1em !important; } /* Relative to label's 8pt */
+    /* Ensure other specific label content styles are maintained or explicitly set for print */
+    .meal-label h3 { font-size: 1em !important; } /* Relative to label's 8pt, so 8pt */
     .product-info { font-size: 1em !important; }
     .variant-info { font-size: 0.9em !important; }
     .modifiers-value { font-size: 0.9em !important; }
@@ -555,9 +567,7 @@ hr { /* Horizontal rule within label */
 
 
     @page {
-        size: letter landscape; /* US Letter, landscape orientation */
-        margin: 0.10in; /* Margin for the entire sheet, adjust based on your labels and printer */
-                       /* The 0.5em margin on labels will be *within* this page margin. */
-                       /* Test print and adjust this page margin if labels + their margins overflow or don't fit as expected. */
+        size: letter landscape;
+        margin: 0.125in; /* MODIFIED: from 0.10in*/
     }
 }
