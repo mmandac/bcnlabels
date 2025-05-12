@@ -1,4 +1,4 @@
-/* static/style.css */
+/* style.css */
 body {
     font-family: sans-serif;
     margin: 0;
@@ -64,63 +64,65 @@ body {
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    /* min-width: 0; /* Might be useful for very narrow flex items */
 }
 
 
 h1 {
     text-align: center;
-    margin-top: 0;
+    margin-top: 0; /* Removed top margin as panel has padding */
     margin-bottom: 20px;
     font-size: 1.8em;
     color: #333;
 }
 
-.branding-selector {
+.branding-selector { /* Assuming you might add this later */
     margin-bottom: 15px;
     text-align: center;
 }
 
 .button-container {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
     gap: 10px;
     margin-bottom: 20px;
     align-items: center;
-    justify-content: center;
+    justify-content: center; /* Center buttons */
 }
 
 #labels_container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-    padding-top: 10px;
+    justify-content: center; /* Center labels within the container */
+    /* gap: 5px; */ /* Gap can be removed or adjusted as label margin will now primarily control spacing */
+    width: 100%; /* Make it responsive by default */
+    padding-top: 10px; /* Some space above labels */
 }
 
-#print_button {
+#print_button { /* This ID is used in JS, ensure consistency */
     padding: 8px 15px;
     cursor: pointer;
 }
 
-.meal-label { /* Screen styles for .meal-label */
+.meal-label {
     position: relative;
     border: 1px solid #ccc;
-    padding: 1em; /* Screen padding */
-    margin: 0.5em; /* Screen margin */
-    width: 192px; /* Approx 2 inches at 96dpi for screen representation */
-    height: 384px; /* Approx 4 inches at 96dpi for screen representation */
+    padding: 1em; /* UPDATED: Increased padding */
+    margin: 0.5em; /* UPDATED: Added margin for space all around */
+    width: 192px; /* Approx 2 inches at 96dpi */
+    height: 384px; /* Approx 4 inches at 96dpi */
     box-sizing: border-box;
-    font-size: 8pt; /* Base font size for label content */
+    font-size: 8pt;
     text-align: center;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    background-color: white;
+    justify-content: space-between; /* Pushes elements to top/bottom */
+    background-color: white; /* Ensure labels are white for printing */
 }
-.meal-label-page-break { /* This class is for print only, but good to have it defined */
-    /* CSS for this class is primarily in @media print */
+.meal-label-page-break { /* For printing */
+    page-break-after: always !important;
 }
 
 
@@ -129,33 +131,33 @@ h1 {
     color: #777;
     text-align: right;
     width: 100%;
-    padding: 0 0.2em;
+    padding: 0 0.2em; /* Small padding */
     box-sizing: border-box;
 }
 
 .logo-container {
     text-align: center;
     margin-bottom: 0.3em;
-    height: 0.5in; /* Screen height for logo area */
+    height: 0.5in; /* Fixed height for logo area */
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    width: 51%;
+    width: 51%; /* Relative to label width */
     margin-left: auto;
     margin-right: auto;
 }
 
 .logo-container img {
     max-height: 100%;
-    max-width: 100%;
+    max-width: 100%; /* Allow logo to fill its container width-wise if aspect ratio allows */
     object-fit: contain;
 }
 
 .meal-label h3 { /* Customer Name */
     margin-top: 0.1em;
     margin-bottom: 0.2em;
-    font-size: 1em;
+    font-size: 1em; /* Relative to 8pt base of meal-label */
     text-align: center;
     font-weight: bold;
     width: 95%;
@@ -178,7 +180,7 @@ h1 {
 
 .variant-info {
     text-align: center;
-    font-size: 0.9em;
+    font-size: 0.9em; /* Slightly smaller for variant */
     margin-top: 0.05em;
     margin-bottom: 0.05em;
     width: 95%;
@@ -189,7 +191,7 @@ h1 {
 
 .modifiers-value {
     text-align: center;
-    font-size: 0.9em;
+    font-size: 0.9em; /* Slightly smaller for modifiers */
     margin-top: 0.05em;
     margin-bottom: 0.1em;
     width: 95%;
@@ -208,7 +210,7 @@ h1 {
     font-size: 1em;
 }
 
-.customer-name-display {
+.customer-name-display { /* This class seems unused in HTML, h3 is used for customer name */
     text-align: left;
     font-weight: normal;
 }
@@ -218,15 +220,15 @@ h1 {
     font-weight: bold;
 }
 
-.meal-label strong {
+.meal-label strong { /* General strong tag styling within label */
     font-weight: bold;
 }
 
-.meal-label p { /* Nutrition items */
+.meal-label p { /* For nutrition items like Calories, Protein etc. */
     text-align: left;
-    margin-top: 0.05em;
+    margin-top: 0.05em; /* Reduced margin for tighter packing */
     margin-bottom: 0.05em;
-    font-size: 0.9em;
+    font-size: 0.9em; /* Slightly smaller for nutrition details */
     display: flex;
     justify-content: space-between;
     align-items: baseline;
@@ -239,16 +241,16 @@ h1 {
     flex-grow: 1;
     border-bottom: 1px dotted black;
     margin: 0 0.3em;
-    min-height: 0.8em;
-    align-self: flex-end;
-    margin-bottom: 2px;
+    min-height: 0.8em; /* Ensure dots are visible */
+    align-self: flex-end; /* Align dots to bottom of text */
+    margin-bottom: 2px; /* Fine tune vertical alignment */
 }
 
-hr {
+hr { /* Horizontal rule within label */
     margin-top: 0.2em;
     margin-bottom: 0.2em;
     border: 0;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #eee; /* Lighter hr */
     width: 95%;
 }
 
@@ -256,7 +258,7 @@ hr {
     font-weight: bold;
     text-align: center;
     margin-top: 0.2em;
-    margin-bottom: 0.1em;
+    margin-bottom: 0.1em; /* Tighter spacing */
     font-size: 0.9em;
     width: 90%;
 }
@@ -281,11 +283,11 @@ hr {
 
 .preparation-value {
     text-align: center;
-    font-size: 0.8em;
+    font-size: 0.8em; /* Smallest text for preparation */
     margin-bottom: 0.1em;
     width: 90%;
     word-break: break-word;
-    min-height: 2.4em;
+    min-height: 2.4em; /* Reserve some space for 2-3 lines */
 }
 
 .preparation-underline {
@@ -299,8 +301,8 @@ hr {
 
 .vacuum-sealed-message {
     text-align: center;
-    font-size: 0.75em;
-    margin-bottom: 0.2em;
+    font-size: 0.75em; /* Very small for this message */
+    margin-bottom: 0.2em; /* Spacing */
     width: 90%;
     margin-left: auto;
     margin-right: auto;
@@ -308,16 +310,16 @@ hr {
 }
 
 .expiry-group {
-    margin-top: auto;
+    margin-top: auto; /* Pushes this group to the bottom of the flex container (meal-label) */
     width: 100%;
     padding-bottom: 0.1em;
 }
 
 .expiry {
     text-align: center;
-    font-size: .8em;
+    font-size: .8em; /* Consistent small size */
     width: 90%;
-    margin: 0.1em auto 0 auto;
+    margin: 0.1em auto 0 auto; /* Top margin, auto for left/right */
     font-weight: bold;
 }
 
@@ -362,10 +364,10 @@ hr {
   text-align: center;
   display: inline-block;
   text-decoration: none;
-  font-size: 0.9em;
+  font-size: 0.9em; /* Slightly smaller buttons */
   line-height: 1.2;
   transition: background-color 0.2s ease;
-  min-width: 120px;
+  min-width: 120px; /* Minimum width for buttons */
 }
 .btn-green { background-color: #28a745; }
 .btn-green:hover { background-color: #1e7e34; }
@@ -374,8 +376,8 @@ hr {
 .btn-red { background-color: #dc3545; }
 .btn-red:hover { background-color: #c82333; }
 
-#csv_file_label {}
-#csv_file { display: none; }
+#csv_file_label {} /* Custom styling for label if needed */
+#csv_file { display: none; /* Hide the default file input */ }
 #file_name_display { font-style: italic; color: #555; }
 
 
@@ -389,22 +391,22 @@ hr {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0,0,0,0.5);
-  padding-top: 30px;
+  background-color: rgba(0,0,0,0.5); /* Darker overlay */
+  padding-top: 30px; /* Space from top */
 }
 
 .modal-content {
   background-color: #fefefe;
-  margin: 2% auto;
+  margin: 2% auto; /* Smaller top margin */
   padding: 0;
   border: 1px solid #888;
   width: 90%;
-  max-width: 1000px;
+  max-width: 1000px; /* Max width for editor modal */
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   animation-name: animatetop;
   animation-duration: 0.4s;
-  border-radius: 5px;
-  overflow: hidden;
+  border-radius: 5px; /* Rounded corners for modal */
+  overflow: hidden; /* Ensure header/footer stay within rounded corners */
 }
 
 @keyframes animatetop {
@@ -413,39 +415,40 @@ hr {
 }
 
 .close-button {
-  color: #fff;
+  color: #fff; /* White close button for better contrast on colored header */
   float: right;
   font-size: 28px;
   font-weight: bold;
-  padding: 0px 10px;
-  line-height: 1;
+  padding: 0px 10px; /* Adjust padding */
+  line-height: 1; /* Ensure it aligns well in header */
 }
 .close-button:hover,
 .close-button:focus {
-  color: #ccc;
+  color: #ccc; /* Lighter on hover */
   text-decoration: none;
   cursor: pointer;
 }
 
 .modal-header {
-  padding: 12px 16px;
-  background-color: #007bff;
+  padding: 12px 16px; /* Adjust padding */
+  background-color: #007bff; /* Consistent blue header */
   color: white;
   border-bottom: 1px solid #ddd;
 }
 .modal-header h2 {
   margin: 0;
-  font-size: 1.2em;
+  font-size: 1.2em; /* Adjust font size */
 }
 
 .modal-body {
-  padding: 15px 20px;
-  max-height: 70vh;
-  overflow-y: auto;
+  padding: 15px 20px; /* More padding in body */
+  max-height: 70vh; /* Limit height of modal body */
+  overflow-y: auto; /* Scroll if content exceeds */
 }
 .modal-body iframe {
   display: block;
-  width: 100%;
+  width: 100%; /* Ensure iframe takes full width of modal body */
+  /* height is set inline in HTML, can be overridden here if needed */
 }
 
 .modal-footer {
@@ -454,10 +457,10 @@ hr {
   color: #333;
   border-top: 1px solid #eee;
   text-align: right;
-  border-bottom-left-radius: 5px;
+  border-bottom-left-radius: 5px; /* Match modal border radius */
   border-bottom-right-radius: 5px;
 }
-.modal-footer h3 {
+.modal-footer h3 { /* Example if you add content to footer */
   margin: 0;
   font-size: 0.9em;
 }
@@ -466,23 +469,26 @@ hr {
 
 /* --- Print styles --- */
 @media print {
-    html, body {
+    html, body { /* ADDED */
         width: 100%;
         height: 100%;
         overflow: visible !important;
+    }
+
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
         background-color: white !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
-        font-size: 8pt !important; /* Base font for all print content unless overridden */
+        font-size: 8pt !important;
     }
-
     body.print-active-layout #page-container {
         display: block !important;
         padding: 0 !important;
         gap: 0 !important;
     }
 
-    /* Elements to hide during print */
     #error-log-panel,
     .button-container,
     #pagination-controls,
@@ -490,11 +496,12 @@ hr {
     #edit-macros-button,
     #csv_file_label,
     #file_name_display,
-    h1 { /* Hide main page title */
+    h1
+    {
         display: none !important;
     }
 
-    #main-content-panel { /* Panel holding labels should take full space */
+    #main-content-panel {
         width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
@@ -503,78 +510,67 @@ hr {
         background-color: white !important;
     }
 
-    #labels_container { /* Container for all labels */
+    #labels_container {
         display: flex !important;
         flex-wrap: wrap !important;
-        justify-content: flex-start !important; /* Align labels to the start of lines */
-        align-content: flex-start !important;   /* Align lines to the start of the container */
-        width: 100% !important; /* Take full width of the @page content area */
+        justify-content: flex-start !important;
+        align-content: flex-start !important;
+        width: 100% !important;
         height: auto !important;
         margin: 0 !important;
         padding: 0 !important;
-        overflow: visible !important; /* Ensure container does not clip labels */
-        orphans: 2; /* Minimum lines at bottom of page before break */
-        widows: 2;  /* Minimum lines at top of page after break */
+        orphans: 2;
+        widows: 2;
     }
 
-    .meal-label { /* Individual label styling for print */
-        border: 1px solid #ccc !important; /* Border for cutting, can be #000 if preferred */
-        padding: 0.5em !important;    /* Internal padding relative to label's 8pt font */
-        margin: 3pt !important;       /* Margin around each label (Option A parameter) */
-        width: 2in !important;        /* Fixed width (non-negotiable) */
-        height: 4in !important;       /* Fixed height (non-negotiable) */
-        box-sizing: border-box !important; /* Ensures padding & border are within width/height */
-        font-size: 8pt !important;    /* Base font size for this specific label */
-        overflow: hidden !important;  /* Content *within* label gets hidden if it overflows label boundaries */
-        page-break-inside: avoid !important; /* Crucial: try to keep each label on a single page */
+    .meal-label {
+        border: 1px solid #ccc !important;
+        padding: 0.5em !important;
+        margin: 3pt !important;   /* MODIFIED: OPTION A - Was 4pt */
+        width: 2in !important;
+        height: 4in !important;
+        box-sizing: border-box !important;
+        font-size: 8pt !important;
+        overflow: hidden !important;
+        page-break-inside: avoid !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: space-between !important;
-        background-color: white !important; /* Ensure label background is white */
+        background-color: white !important;
     }
-
-     .meal-label-page-break { /* Applied by JS to force a break after specific labels */
+     .meal-label-page-break {
         page-break-after: always !important;
     }
 
-    /* Adjustments for elements within the label for print */
-    .logo-container { /* Logo area within the label */
+    .logo-container {
         height: 0.75in !important;
-        width: 90% !important; /* As per previous refinements */
+        width: 90% !important;
         margin-left: auto !important;
         margin-right: auto !important;
-        margin-bottom: 0.2em !important; /* Slightly adjusted for print */
     }
     .logo-container img {
         max-height: 100% !important;
-        max-width: 100% !important; /* Fill the 90% width of its container */
+        max-width: 100% !important;
         object-fit: contain !important;
     }
 
-    /* Ensure font sizes within the label are consistently based on the label's 8pt or explicit pt */
-    .meal-label .generation-date { font-size: .8em !important; } /* 6.4pt */
-    .meal-label h3 { font-size: 1em !important; } /* 8pt */
-    .meal-label .product-info { font-size: 1em !important; } /* 8pt */
-    .meal-label .variant-info { font-size: 0.9em !important; } /* 7.2pt */
-    .meal-label .modifiers-value { font-size: 0.9em !important; } /* 7.2pt */
-    .meal-label .customer-price-line { font-size: 1em !important; } /* 8pt */
-    .meal-label p { font-size: 0.9em !important; } /* 7.2pt for nutrition details */
-    .meal-label .nutrition-header { font-size: 0.9em !important; } /* 7.2pt */
-    .meal-label .preparation-header { font-size: 0.9em !important; } /* 7.2pt */
-    .meal-label .preparation-value { font-size: 0.8em !important; min-height: 2em !important; } /* 6.4pt, ensure some height */
-    .meal-label .vacuum-sealed-message { font-size: 0.75em !important; line-height: 1.1 !important; } /* 6pt */
-    .meal-label .expiry { font-size: 0.8em !important; } /* 6.4pt */
-    /* Style for the custom storage instruction text if not already covered by a more general rule */
-    .meal-label div[style*="font-size: 8pt"] { font-size: 0.8em !important; } /* e.g. 6.4pt for storage instructions, if it was 8pt inline */
-    .meal-label div[style*="font-size: 8pt"] strong { font-size: 1em !important; } /* ensure strong within it remains relative to its parent */
+    .meal-label h3 { font-size: 1em !important; }
+    .product-info { font-size: 1em !important; }
+    .variant-info { font-size: 0.9em !important; }
+    .modifiers-value { font-size: 0.9em !important; }
+    .meal-label p { font-size: 0.9em !important; }
+    .nutrition-header { font-size: 0.9em !important; }
+    .preparation-header { font-size: 0.9em !important; }
+    .preparation-value { font-size: 0.8em !important; }
+    .vacuum-sealed-message { font-size: 0.75em !important; }
+    .expiry { font-size: 0.8em !important; }
 
 
     @page {
         size: letter landscape;
-        margin: 0.125in; /* Page margin (very tight for 2 rows of 4in labels + 3pt individual margins) */
-
-        /* Empty margin boxes to suggest no browser-default headers/footers, user must also disable in print dialog */
+        margin: 0.125in; /* Kept from previous step */
+        /* ADDED: Empty margin boxes */
         @top-left { content: ""; margin: 0; padding: 0; border: none; }
         @top-center { content: ""; margin: 0; padding: 0; border: none; }
         @top-right { content: ""; margin: 0; padding: 0; border: none; }
