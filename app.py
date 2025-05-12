@@ -84,8 +84,11 @@ def process_csv():
             labels_data = []
             missing_macros_log = [] # To store logs for missing macros
             generation_date = datetime.now().date()
-            generation_date_str = generation_date.strftime('%Y-%m-%d')
-            default_expiry_date = generation_date + timedelta(days=11)
+            # MODIFICATION: Change date format for generation_date_str
+            generation_date_str = generation_date.strftime('%m/%d/%y') # Changed from '%Y-%m-%d'
+
+            default_expiry_days = 11 # Define default days, used in timedelta and message
+            default_expiry_date = generation_date + timedelta(days=default_expiry_days)
 
             storage_instruction = ""
             try:
@@ -141,15 +144,20 @@ def process_csv():
                         })
                         nutrition_info = {} # Use empty dict to avoid errors later, label will show blank nutrition
 
-                    current_expiry_date_str = default_expiry_date.strftime('%Y-%m-%d')
+                    # MODIFICATION: Change default expiry date format
+                    current_expiry_date_str = default_expiry_date.strftime('%m/%d/%y') # Changed from '%Y-%m-%d'
+
                     custom_expiry_days_str = nutrition_info.get('Expiry Days', '').strip()
                     if custom_expiry_days_str:
                         try:
                             custom_expiry_days = int(custom_expiry_days_str)
                             custom_expiry_date = generation_date + timedelta(days=custom_expiry_days)
-                            current_expiry_date_str = custom_expiry_date.strftime('%Y-%m-%d')
+                            # MODIFICATION: Change custom expiry date format
+                            current_expiry_date_str = custom_expiry_date.strftime('%m/%d/%y') # Changed from '%Y-%m-%d'
                         except ValueError:
-                            print(f"Warning: Invalid 'Expiry Days' value '{custom_expiry_days_str}' for {product_name_original} - {variant_name_original}. Using default expiry.")
+                            # MODIFICATION: Updated warning message
+                            print(f"Warning: Invalid 'Expiry Days' value '{custom_expiry_days_str}' for {product_name_original} - {variant_name_original}. Using default expiry ({default_expiry_days} days).")
+                            # current_expiry_date_str will remain the default formatted one set above
 
                     customer_full_name = row.get('Customer', '').strip()
                     customer_parts = customer_full_name.split(' ', 1)
@@ -158,7 +166,7 @@ def process_csv():
 
                     for _ in range(quantity):
                         label_data = {
-                            'generation_date': generation_date_str,
+                            'generation_date': generation_date_str, # Already updated format
                             'logo_url': logo_url,
                             'customer_first_name': customer_first_name,
                             'customer_last_name': customer_last_name,
@@ -166,7 +174,7 @@ def process_csv():
                             'variant': variant_name_original,
                             'modifiers': modifiers,
                             'price': f'{price_per_item:.2f}' if price_per_item else '',
-                            'expiry_date': current_expiry_date_str,
+                            'expiry_date': current_expiry_date_str, # Already updated format
                             'calories': nutrition_info.get('Calories', ''),
                             'protein': nutrition_info.get('Protein', ''),
                             'carbs': nutrition_info.get('Carbs', ''),
@@ -181,7 +189,6 @@ def process_csv():
 
             if not processed_rows and reader.fieldnames:
                 return jsonify({'error': 'CSV file contains headers but no data rows, or all rows were skipped.'}), 400
-            # Modify this condition slightly: if we have missing_macros_log, it means we processed something.
             if not labels_data and not processed_rows and not missing_macros_log:
                  return jsonify({'error': 'No valid data rows found in CSV to generate labels.'}), 400
 

@@ -93,11 +93,8 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     justify-content: center; /* Center labels within the container */
-    gap: 5px; /* Small gap between labels on screen */
-    /* width: 960px; /* Consider removing fixed width or making it max-width: 100% for responsiveness */
+    /* gap: 5px; */ /* Gap can be removed or adjusted as label margin will now primarily control spacing */
     width: 100%; /* Make it responsive by default */
-    /* margin-left: auto; */ /* Not needed if justify-content: center and width: 100% */
-    /* margin-right: auto; */
     padding-top: 10px; /* Some space above labels */
 }
 
@@ -109,11 +106,11 @@ h1 {
 .meal-label {
     position: relative;
     border: 1px solid #ccc;
-    padding: 0.5em;
+    padding: 1em; /* UPDATED: Increased padding */
+    margin: 0.5em; /* UPDATED: Added margin for space all around */
     width: 192px; /* Approx 2 inches at 96dpi */
     height: 384px; /* Approx 4 inches at 96dpi */
     box-sizing: border-box;
-    margin-bottom: 5px; /* Consistent with gap */
     font-size: 8pt;
     text-align: center;
     overflow: hidden;
@@ -140,12 +137,12 @@ h1 {
 .logo-container {
     text-align: center;
     margin-bottom: 0.3em;
-    height: 0.75in; /* Fixed height for logo area */
+    height: 0.5in; /* Fixed height for logo area */
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    width: 90%; /* Relative to label width */
+    width: 51%; /* Relative to label width */
     margin-left: auto;
     margin-right: auto;
 }
@@ -515,22 +512,28 @@ hr { /* Horizontal rule within label */
         width: 100% !important; /* Take full width of the @page content area */
         height: auto !important;
         margin: 0 !important;
-        padding: 0 !important;
-        gap: 0 !important; /* No gap for precise alignment on pre-cut labels */
+        padding: 0 !important; /* Container itself has no padding */
+        /* gap: 0 !important; */ /* Gap removed, label margins will control spacing */
         orphans: 2; /* Minimum lines at bottom of page before break */
         widows: 2;  /* Minimum lines at top of page after break */
     }
 
     .meal-label {
         border: 1px solid #ccc !important; /* Or set to none if labels are pre-cut and guides are not needed */
-        padding: 0.02in !important; /* Minimal padding for print */
-        width: 2in !important;  /* Avery 5168/8168 width */
-        height: 4in !important; /* Avery 5168/8168 height (half of a landscape letter page is 4.25in, so 4in is typical label height) */
+        padding: 1em !important;    /* UPDATED: Increased padding for print */
+        margin: 0.5em !important;   /* UPDATED: Added margin for print */
+        width: 2in !important;      /* Avery 5168/8168 width */
+        height: 4in !important;     /* Avery 5168/8168 height */
         box-sizing: border-box !important;
         font-size: 8pt !important;
         overflow: hidden !important;
-        margin: 0 !important; /* No margin for precise alignment */
         page-break-inside: avoid !important; /* Try to keep each label on one page */
+        /* Ensure flex properties from screen are still active if needed, or redefine */
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        background-color: white !important;
     }
      .meal-label-page-break {
         page-break-after: always !important; /* Force page break after this label */
@@ -553,8 +556,8 @@ hr { /* Horizontal rule within label */
 
     @page {
         size: letter landscape; /* US Letter, landscape orientation */
-        margin: 0.25in; /* Margin for the entire sheet, adjust based on your labels and printer */
-                       /* For Avery 5168 (2x5 layout of 4"x2" labels on landscape US Letter) this might be ~0.2125in top/bottom, 0.25in left/right */
-                       /* It's often best to test print and adjust */
+        margin: 0.10in; /* Margin for the entire sheet, adjust based on your labels and printer */
+                       /* The 0.5em margin on labels will be *within* this page margin. */
+                       /* Test print and adjust this page margin if labels + their margins overflow or don't fit as expected. */
     }
 }
