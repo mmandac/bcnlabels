@@ -35,12 +35,8 @@ def load_nutrition_prep_data():
                     'Carbs': row.get('Carbs', ''),
                     'Fat': row.get('Fat', ''),
                     'How to Prepare': row.get('How to Prepare', '')
-                    # 'Expiry Days' is intentionally not loaded here for the editor's core fieldset
-                    # If it's still in the CSV, it will be ignored by the editor save.
-                    # For label generation, process_csv will try to get it if it exists in the loaded nutrition_info.
                 }
-                # If 'Expiry Days' is critical for label generation and might exist in older CSVs:
-                if 'Expiry Days' in row:
+                if 'Expiry Days' in row: # Still load if present for backward compatibility in this load function
                      data[key]['Expiry Days'] = row.get('Expiry Days', '')
 
     except FileNotFoundError:
@@ -72,7 +68,6 @@ def process_csv():
 
     if file and file.filename.endswith('.csv'):
         try:
-            # --- CORRECTED CSV FILE READING START ---
             file.stream.seek(0)
             content_bytes = file.read()
             try:
@@ -82,17 +77,17 @@ def process_csv():
 
             csv_file_like_object = io.StringIO(content_string)
             reader = csv.DictReader(csv_file_like_object)
-            # --- CORRECTED CSV FILE READING END ---
 
-            if not reader.fieldnames: # Check if CSV is empty or has no headers
+            if not reader.fieldnames:
                 return jsonify({'error': 'CSV file is empty or does not contain headers.'}), 400
 
             labels_data = []
+            missing_macros_log = [] # To store logs for missing macros
             generation_date = datetime.now().date()
             generation_date_str = generation_date.strftime('%Y-%m-%d')
             default_expiry_date = generation_date + timedelta(days=11)
 
-            storage_instruction = "" # Default is an empty string
+            storage_instruction = ""
             try:
                 with open(STORAGE_INSTRUCTION_FILENAME, 'r', encoding='utf-8') as f_storage:
                     custom_storage_instruction = f_storage.read().strip()
@@ -129,7 +124,7 @@ def process_csv():
                     product_name_original = row.get('Product', '').strip()
                     variant_name_original = row.get('Variant', '').strip()
 
-                    if not product_name_original: # Skip row if product name is missing
+                    if not product_name_original:
                         print(f"Warning: Skipping row {row_number} due to missing 'Product' name.")
                         continue
 
@@ -137,10 +132,17 @@ def process_csv():
                     variant_lookup = variant_name_original.lower()
 
                     lookup_key = (product_lookup, variant_lookup)
-                    nutrition_info = nutrition_prep_data.get(lookup_key, {})
+                    nutrition_info = nutrition_prep_data.get(lookup_key) # Get data
+
+                    if not nutrition_info:
+                        missing_macros_log.append({
+                            "product": product_name_original,
+                            "variant": variant_name_original
+                        })
+                        nutrition_info = {} # Use empty dict to avoid errors later, label will show blank nutrition
 
                     current_expiry_date_str = default_expiry_date.strftime('%Y-%m-%d')
-                    custom_expiry_days_str = nutrition_info.get('Expiry Days', '').strip() # Still attempt to get if in old CSV
+                    custom_expiry_days_str = nutrition_info.get('Expiry Days', '').strip()
                     if custom_expiry_days_str:
                         try:
                             custom_expiry_days = int(custom_expiry_days_str)
@@ -177,15 +179,19 @@ def process_csv():
                 except Exception as e:
                     return jsonify({'error': f'Unexpected error processing row {row_number} ({row}). Details: {e}'}), 400
 
-            if not processed_rows and reader.fieldnames: # Headers existed but no data rows were processed
+            if not processed_rows and reader.fieldnames:
                 return jsonify({'error': 'CSV file contains headers but no data rows, or all rows were skipped.'}), 400
-            if not labels_data and not processed_rows: # No data rows processed at all (might overlap with above)
+            # Modify this condition slightly: if we have missing_macros_log, it means we processed something.
+            if not labels_data and not processed_rows and not missing_macros_log:
                  return jsonify({'error': 'No valid data rows found in CSV to generate labels.'}), 400
 
+            return jsonify({
+                'labels': labels_data,
+                'storage': storage_instruction,
+                'missing_macros': missing_macros_log
+            })
 
-            return jsonify({'labels': labels_data, 'storage': storage_instruction })
-
-        except csv.Error as e: # Catches errors from csv.DictReader if headers are malformed etc.
+        except csv.Error as e:
              return jsonify({'error': f'Error parsing CSV structure: {e}. Please check CSV format.'}), 400
         except Exception as e:
             print(f"Unhandled error in /process_csv: {e}")
@@ -199,7 +205,7 @@ def process_csv():
 @app.route('/edit_data_page', methods=['GET'])
 def edit_data_page():
     data_rows = []
-    fieldnames = ['Product', 'Variant', 'Calories', 'Protein', 'Carbs', 'Fat', 'How to Prepare'] # No 'Expiry Days'
+    fieldnames = ['Product', 'Variant', 'Calories', 'Protein', 'Carbs', 'Fat', 'How to Prepare']
     error_message = None
 
     try:
@@ -211,16 +217,16 @@ def edit_data_page():
                 data_rows.append(row_to_add)
 
         if not data_rows and not os.path.exists(NUTRITION_PREP_FILE):
-             error_message = f"{NUTRITION_PREP_FILE} not found. Add products and save to create it."
+             error_message = f"{os.path.basename(NUTRITION_PREP_FILE)} not found. Add products and save to create it."
         elif not data_rows and actual_fieldnames_from_csv:
-             pass # File exists, headers read, but no data rows.
+             pass
         elif not actual_fieldnames_from_csv and os.path.exists(NUTRITION_PREP_FILE):
-            error_message = f"Could not read headers from {NUTRITION_PREP_FILE}. File might be empty or corrupted."
+            error_message = f"Could not read headers from {os.path.basename(NUTRITION_PREP_FILE)}. File might be empty or corrupted."
 
     except FileNotFoundError:
-        error_message = f"{NUTRITION_PREP_FILE} not found. Add products and save to create it."
+        error_message = f"{os.path.basename(NUTRITION_PREP_FILE)} not found. Add products and save to create it."
     except Exception as e:
-        error_message = f"Error reading data from {NUTRITION_PREP_FILE}: {e}"
+        error_message = f"Error reading data from {os.path.basename(NUTRITION_PREP_FILE)}: {e}"
         print(f"Error in /edit_data_page: {e}")
 
     return render_template('edit_data.html', headers=fieldnames, data=data_rows, error_message=error_message)
@@ -234,7 +240,7 @@ def save_data():
         if not isinstance(data_to_save, list):
             return jsonify({'status': 'error', 'message': 'Invalid data format.'}), 400
 
-        fieldnames = ['Product', 'Variant', 'Calories', 'Protein', 'Carbs', 'Fat', 'How to Prepare'] # No 'Expiry Days'
+        fieldnames = ['Product', 'Variant', 'Calories', 'Protein', 'Carbs', 'Fat', 'How to Prepare']
 
         with open(NUTRITION_PREP_FILE, 'w', newline='', encoding='utf-8') as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
@@ -247,7 +253,7 @@ def save_data():
                     print(f"Skipping non-dictionary row during save: {row_data}")
 
         global nutrition_prep_data
-        nutrition_prep_data = load_nutrition_prep_data()
+        nutrition_prep_data = load_nutrition_prep_data() # Reload after saving
 
         return jsonify({'status': 'success', 'message': 'Data saved successfully!'})
 
@@ -259,7 +265,4 @@ def save_data():
 
 # --- Main execution (for local development only) ---
 if __name__ == '__main__':
-    # For local development, you can set debug=True
-    # For production on PythonAnywhere, this app.run() part is not used.
-    # PythonAnywhere uses Gunicorn (or another WSGI server)
-    app.run(debug=True)  # Indented!
+    app.run(debug=True)

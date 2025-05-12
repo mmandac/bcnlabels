@@ -1,36 +1,107 @@
 body {
     font-family: sans-serif;
-    margin: 20px;
+    margin: 0;
     font-size: 1em; /* Base font size for em calculations (around 12pt) */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f4f4f4; /* Light grey background for the page */
 }
+
+#page-container {
+    display: flex;
+    flex-grow: 1;
+    padding: 20px;
+    gap: 20px;
+}
+
+#error-log-panel {
+    flex: 0 0 320px; /* Fixed width for error log panel */
+    padding: 15px;
+    border: 1px solid #ddd;
+    background-color: #fff; /* White background for the panel */
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    height: fit-content; /* Adjust height based on content */
+    max-height: calc(100vh - 100px); /* Max height considering padding and potential header/footer */
+    overflow-y: auto; /* Scroll if content overflows */
+}
+
+#error-log-panel h2 {
+    margin-top: 0;
+    font-size: 1.1em; /* Slightly smaller header */
+    color: #c82333; /* Bootstrap danger red */
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+#error-log-panel ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#error-log-panel ul li {
+    color: #721c24; /* Darker red for text for better readability */
+    background-color: #f8d7da; /* Light red background for each item */
+    border: 1px solid #f5c6cb; /* Reddish border */
+    margin-bottom: 8px;
+    font-size: 0.85em; /* Smaller font for error items */
+    padding: 8px 10px;
+    border-radius: 4px;
+    line-height: 1.4;
+}
+#error-log-panel ul li:last-child {
+    margin-bottom: 0;
+}
+
+
+#main-content-panel {
+    flex: 1; /* Main content takes the remaining space */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    /* min-width: 0; /* Might be useful for very narrow flex items */
+}
+
 
 h1 {
     text-align: center;
-    margin-bottom: 15px;
+    margin-top: 0; /* Removed top margin as panel has padding */
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    color: #333;
 }
 
-.branding-selector {
-    margin-bottom: 10px;
+.branding-selector { /* Assuming you might add this later */
+    margin-bottom: 15px;
+    text-align: center;
 }
 
 .button-container {
     display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
     gap: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     align-items: center;
+    justify-content: center; /* Center buttons */
 }
 
 #labels_container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start; /* Keeps labels aligned to the start of each 960px line */
-    gap: 0;
-    width: 960px; /* ADDED: 5 labels * 192px per label */
-    margin-left: auto; /* ADDED: To center the 960px container on the page */
-    margin-right: auto; /* ADDED: To center the 960px container on the page */
+    justify-content: center; /* Center labels within the container */
+    gap: 5px; /* Small gap between labels on screen */
+    /* width: 960px; /* Consider removing fixed width or making it max-width: 100% for responsiveness */
+    width: 100%; /* Make it responsive by default */
+    /* margin-left: auto; */ /* Not needed if justify-content: center and width: 100% */
+    /* margin-right: auto; */
+    padding-top: 10px; /* Some space above labels */
 }
 
-#print_button {
+#print_button { /* This ID is used in JS, ensure consistency */
     padding: 8px 15px;
     cursor: pointer;
 }
@@ -38,211 +109,226 @@ h1 {
 .meal-label {
     position: relative;
     border: 1px solid #ccc;
-    padding: 0.5em; 
-    width: 192px; 
-    height: 384px; 
+    padding: 0.5em;
+    width: 192px; /* Approx 2 inches at 96dpi */
+    height: 384px; /* Approx 4 inches at 96dpi */
     box-sizing: border-box;
-    margin-bottom: 0; 
-    font-size: 8pt; 
+    margin-bottom: 5px; /* Consistent with gap */
+    font-size: 8pt;
     text-align: center;
-    overflow: hidden; 
+    overflow: hidden;
     display: flex;
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: space-between; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between; /* Pushes elements to top/bottom */
+    background-color: white; /* Ensure labels are white for printing */
+}
+.meal-label-page-break { /* For printing */
+    page-break-after: always !important;
 }
 
+
 .generation-date {
-    font-size: .8em; 
+    font-size: .8em;
     color: #777;
     text-align: right;
-    width: 100%; 
+    width: 100%;
+    padding: 0 0.2em; /* Small padding */
+    box-sizing: border-box;
 }
 
 .logo-container {
     text-align: center;
-    margin-bottom: 0.3em; 
-    height: 0.75in; 
+    margin-bottom: 0.3em;
+    height: 0.75in; /* Fixed height for logo area */
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    width: 80%; 
+    width: 90%; /* Relative to label width */
     margin-left: auto;
     margin-right: auto;
 }
 
 .logo-container img {
     max-height: 100%;
-    max-width: 90%; 
-    height: auto;
-    width: auto;
-    object-fit: contain; 
+    max-width: 100%; /* Allow logo to fill its container width-wise if aspect ratio allows */
+    object-fit: contain;
 }
 
-.meal-label h3 { 
-    margin-top: 0.1em; 
-    margin-bottom: 0.2em; 
-    font-size: 1em; 
-    text-align: center; 
-    font-weight: bold; 
-    width: 90%; 
-    margin-left: auto;
-    margin-right: auto;
-    word-break: break-word; 
-}
-
-.product-info { 
-    text-align: center; 
-    margin-top: 0.2em;
-    margin-bottom: 0.1em; 
-    font-size: 1em; 
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-    word-break: break-word;
-    font-weight: bold; 
-}
-
-.variant-info { 
+.meal-label h3 { /* Customer Name */
+    margin-top: 0.1em;
+    margin-bottom: 0.2em;
+    font-size: 1em; /* Relative to 8pt base of meal-label */
     text-align: center;
-    font-size: 1em; 
-    margin-top: 0.05em; 
-    margin-bottom: 0.05em; 
-    width: 90%;
+    font-weight: bold;
+    width: 95%;
     margin-left: auto;
     margin-right: auto;
     word-break: break-word;
 }
 
-.modifiers-value { 
-    text-align: center; 
-    font-size: 1em; 
-    margin-top: 0.05em; 
-    margin-bottom: 0.1em; 
-    width: 90%;
+.product-info {
+    text-align: center;
+    margin-top: 0.2em;
+    margin-bottom: 0.1em;
+    font-size: 1em;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    word-break: break-word;
+    font-weight: bold;
+}
+
+.variant-info {
+    text-align: center;
+    font-size: 0.9em; /* Slightly smaller for variant */
+    margin-top: 0.05em;
+    margin-bottom: 0.05em;
+    width: 95%;
     margin-left: auto;
     margin-right: auto;
     word-break: break-word;
 }
 
-.customer-price-line { 
+.modifiers-value {
+    text-align: center;
+    font-size: 0.9em; /* Slightly smaller for modifiers */
+    margin-top: 0.05em;
+    margin-bottom: 0.1em;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    word-break: break-word;
+    font-style: italic;
+}
+
+.customer-price-line {
     display: flex;
     justify-content: space-between;
-    align-items: baseline; 
-    width: 90%; 
-    margin: 0.1em auto; 
-    font-size: 1em; 
+    align-items: baseline;
+    width: 95%;
+    margin: 0.1em auto;
+    font-size: 1em;
 }
 
-.customer-name-display { 
+.customer-name-display { /* This class seems unused in HTML, h3 is used for customer name */
     text-align: left;
-    font-weight: normal; 
+    font-weight: normal;
 }
 
-.price-display { 
+.price-display {
     text-align: right;
+    font-weight: bold;
 }
 
-.meal-label strong {
-    font-weight: bold; 
+.meal-label strong { /* General strong tag styling within label */
+    font-weight: bold;
 }
 
-.meal-label p { 
+.meal-label p { /* For nutrition items like Calories, Protein etc. */
     text-align: left;
-    margin-top: 0.1em;
-    margin-bottom: 0.05em; 
-    font-size: 1em; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: baseline; 
-    width: 90%;
+    margin-top: 0.05em; /* Reduced margin for tighter packing */
+    margin-bottom: 0.05em;
+    font-size: 0.9em; /* Slightly smaller for nutrition details */
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .meal-label p .dots {
-    flex-grow: 1; 
-    border-bottom: 1px dotted black; 
-    margin: 0 0.3em; 
-    height: 1em; 
+    flex-grow: 1;
+    border-bottom: 1px dotted black;
+    margin: 0 0.3em;
+    min-height: 0.8em; /* Ensure dots are visible */
+    align-self: flex-end; /* Align dots to bottom of text */
+    margin-bottom: 2px; /* Fine tune vertical alignment */
 }
 
-hr {
-    margin-top: 0.2em; 
-    margin-bottom: 0.2em; 
+hr { /* Horizontal rule within label */
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
     border: 0;
-    border-top: 1px solid #eee;
-    width: 95%; 
+    border-top: 1px solid #eee; /* Lighter hr */
+    width: 95%;
 }
 
 .nutrition-header {
     font-weight: bold;
     text-align: center;
-    margin-top: 0.2em; 
-    margin-bottom: 0.2em; 
-    font-size: 1em; 
+    margin-top: 0.2em;
+    margin-bottom: 0.1em; /* Tighter spacing */
+    font-size: 0.9em;
     width: 90%;
 }
 
 .nutrition-underline {
     border-top: 1px solid black;
-    margin-top: 0.1em;
+    margin-top: 0.05em;
     margin-bottom: 0.1em;
-    width: 95%; 
+    width: 95%;
     margin-left: auto;
     margin-right: auto;
 }
 
 .preparation-header {
-    text-align: center; 
+    text-align: center;
     font-weight: bold;
-    margin-top: 0.3em; 
+    margin-top: 0.3em;
     margin-bottom: 0.1em;
-    font-size: 1em; 
+    font-size: 0.9em;
     width: 90%;
 }
 
-.preparation-value { /* MODIFIED for website */
-    text-align: center; 
-    font-size: 0.8em; /* Changed from 1em for website */
-    margin-bottom: 0.1em; 
+.preparation-value {
+    text-align: center;
+    font-size: 0.8em; /* Smallest text for preparation */
+    margin-bottom: 0.1em;
     width: 90%;
     word-break: break-word;
+    min-height: 2.4em; /* Reserve some space for 2-3 lines */
 }
 
 .preparation-underline {
     border-top: 1px solid black;
     margin-top: 0.1em;
-    margin-bottom: 0.1em; 
-    width: 95%; 
+    margin-bottom: 0.1em;
+    width: 95%;
     margin-left: auto;
     margin-right: auto;
 }
 
 .vacuum-sealed-message {
     text-align: center;
-    font-size: 0.8em; /* MODIFIED for website */
-    margin-bottom: 0.3em;
-    width: 90%; /* Adding for consistency with other text blocks */
+    font-size: 0.75em; /* Very small for this message */
+    margin-bottom: 0.2em; /* Spacing */
+    width: 90%;
     margin-left: auto;
     margin-right: auto;
+    line-height: 1.2;
 }
 
 .expiry-group {
-    margin-top: auto; 
+    margin-top: auto; /* Pushes this group to the bottom of the flex container (meal-label) */
     width: 100%;
+    padding-bottom: 0.1em;
 }
 
 .expiry {
     text-align: center;
-    font-size: .7em; 
+    font-size: .8em; /* Consistent small size */
     width: 90%;
-    margin-top: 0;
+    margin: 0.1em auto 0 auto; /* Top margin, auto for left/right */
+    font-weight: bold;
 }
 
 #pagination-controls {
     text-align: center;
-    margin-top: 20px;
-    margin-bottom: 20px; 
+    margin-top: 25px;
+    margin-bottom: 20px;
 }
 
 .pagination-button {
@@ -252,12 +338,11 @@ hr {
     margin: 0 5px;
     cursor: pointer;
     border-radius: 4px;
+    transition: background-color 0.2s ease;
 }
-
-.pagination-button:hover {
+.pagination-button:hover:not(:disabled) {
     background-color: #e0e0e0;
 }
-
 .pagination-button:disabled {
     background-color: #f8f8f8;
     color: #bbb;
@@ -267,216 +352,63 @@ hr {
 
 .page-info-span {
     margin: 0 15px;
-    font-size: 1em; 
-    vertical-align: middle; 
+    font-size: 1em;
+    vertical-align: middle;
 }
+
+/* General Button Styles */
 .btn {
-  padding: 10px 15px; 
+  padding: 10px 15px;
   cursor: pointer;
   border: none;
   border-radius: 4px;
-  color: white; 
+  color: white;
   text-align: center;
-  display: inline-block; 
-  text-decoration: none; 
-  font-size: 1em; 
-  line-height: 1.2; 
+  display: inline-block;
+  text-decoration: none;
+  font-size: 0.9em; /* Slightly smaller buttons */
+  line-height: 1.2;
+  transition: background-color 0.2s ease;
+  min-width: 120px; /* Minimum width for buttons */
 }
+.btn-green { background-color: #28a745; }
+.btn-green:hover { background-color: #1e7e34; }
+.btn-blue { background-color: #007bff; }
+.btn-blue:hover { background-color: #0056b3; }
+.btn-red { background-color: #dc3545; }
+.btn-red:hover { background-color: #c82333; }
 
-.btn-green {
-  background-color: #28a745; 
-}
-.btn-green:hover {
-  background-color: #1e7e34; 
-}
-
-.btn-blue {
-  background-color: #007bff; 
-}
-.btn-blue:hover {
-  background-color: #0056b3; 
-}
-
-.btn-red {
-  background-color: #dc3545; 
-}
-.btn-red:hover {
-  background-color: #c82333; 
-}
-
-#csv_file_label { 
-}
-
-#csv_file {
-  display: none;
-}
-
-/* Print styles */
-@media print {
-    body * {
-        visibility: hidden;
-    }
-
-    #labels_container, #labels_container * {
-        visibility: visible;
-    }
-
-    body {
-        margin: 0 !important;
-        padding: 0 !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        font-size: 8pt; 
-    }
-
-    @page {
-        size: landscape;
-        margin: 0.1in; 
-        padding: 0;
-    }
-
-    #labels_container {
-        position: absolute;
-        width: 10in;  
-        height: 8in; 
-        left: 0.5in; 
-        top: 0.25in; 
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start; 
-        align-content: flex-start;   
-        margin: 0 !important;
-        padding: 0 !important;
-        gap: 0; 
-    }
-
-    .meal-label { 
-        border: 1px solid #ccc;
-        padding: 0.02in !important;
-        width: 2in;
-        height: 4in;
-        box-sizing: border-box;
-        font-size: 8pt; 
-        text-align: center;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        margin: 0 !important;
-    }
-
-    .meal-label-page-break {
-        page-break-after: always;
-    }
-
-    .generation-date { /* Print */
-        font-size: 1em; 
-        color: #777;
-        text-align: right;
-        width: 100%;
-    }
-
-    .logo-container { /* Print */
-        text-align: center;
-        height: 0.75in;
-        overflow: hidden;
-        margin-bottom: 0.01in;
-        margin-left: auto;
-        margin-right: auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 80%;
-    }
-
-    .logo-container img { /* Print */
-        max-height: 100%;
-        max-width: 90%;
-        height: auto;
-        width: auto;
-        object-fit: contain;
-    }
-    
-    .meal-label h3 { /* Print */
-        font-size: 1em; 
-        font-weight: bold; 
-        width: 95%; 
-        margin-left: auto;
-        margin-right: auto;
-        word-break: break-word;
-        margin-top: 0.01in;
-        margin-bottom: 0.01in;
-    }
-
-    .product-info { /* Print */
-        text-align: center; 
-        font-size: 1em; 
-        font-weight: bold; 
-        width: 95%;
-        margin-left: auto;
-        margin-right: auto;
-        word-break: break-word;
-        margin-top: 0.01in;
-        margin-bottom: 0.01in;
-    }
-
-    .variant-info { /* Print */
-        text-align: center;
-        font-size: 1em; 
-        width: 95%;
-        margin-left: auto;
-        margin-right: auto;
-        word-break: break-word;
-        margin-top: 0.005in;
-        margin-bottom: 0.005in;
-    }
-
-    .modifiers-value { /* Print */
-        text-align: center; 
-        font-size: 1em; 
-        width: 95%;
-        margin-left: auto;
-        margin-right: auto;
-        word-break: break-word;
-        margin-top: 0.005in;
-        margin-bottom: 0.01in;
-    }
-
-    .customer-price-line { /* Print */
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline; 
-        width: 95%; /* Ensures it uses the full width within its container */
-        margin: 0.01in auto; /* Adjust vertical margin and center it */
-        font-size: 1em; /* Consistent font size */
-    }
-}
+#csv_file_label {} /* Custom styling for label if needed */
+#csv_file { display: none; /* Hide the default file input */ }
+#file_name_display { font-style: italic; color: #555; }
 
 
 /* --- START: Modal CSS --- */
 .modal {
-  display: none; 
-  position: fixed; 
-  z-index: 1000; 
+  display: none;
+  position: fixed;
+  z-index: 1000;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  overflow: auto; 
-  background-color: rgba(0,0,0,0.4); 
-  padding-top: 30px;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5); /* Darker overlay */
+  padding-top: 30px; /* Space from top */
 }
 
 .modal-content {
   background-color: #fefefe;
-  margin: 2% auto; 
+  margin: 2% auto; /* Smaller top margin */
   padding: 0;
   border: 1px solid #888;
-  width: 90%; 
-  max-width: 1000px; 
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  width: 90%;
+  max-width: 1000px; /* Max width for editor modal */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   animation-name: animatetop;
-  animation-duration: 0.4s
+  animation-duration: 0.4s;
+  border-radius: 5px; /* Rounded corners for modal */
+  overflow: hidden; /* Ensure header/footer stay within rounded corners */
 }
 
 @keyframes animatetop {
@@ -485,48 +417,144 @@ hr {
 }
 
 .close-button {
-  color: #aaa;
+  color: #fff; /* White close button for better contrast on colored header */
   float: right;
   font-size: 28px;
   font-weight: bold;
-  padding: 0px 12px;
+  padding: 0px 10px; /* Adjust padding */
+  line-height: 1; /* Ensure it aligns well in header */
 }
-
 .close-button:hover,
 .close-button:focus {
-  color: black;
+  color: #ccc; /* Lighter on hover */
   text-decoration: none;
   cursor: pointer;
 }
 
 .modal-header {
-  padding: 10px 16px; 
-  background-color: #c82333; 
+  padding: 12px 16px; /* Adjust padding */
+  background-color: #007bff; /* Consistent blue header */
   color: white;
   border-bottom: 1px solid #ddd;
 }
-
 .modal-header h2 {
   margin: 0;
-  font-size: 1.1em; 
+  font-size: 1.2em; /* Adjust font size */
 }
 
 .modal-body {
-  padding: 10px 16px; 
+  padding: 15px 20px; /* More padding in body */
+  max-height: 70vh; /* Limit height of modal body */
+  overflow-y: auto; /* Scroll if content exceeds */
 }
 .modal-body iframe {
-  display: block; 
+  display: block;
+  width: 100%; /* Ensure iframe takes full width of modal body */
+  /* height is set inline in HTML, can be overridden here if needed */
 }
 
 .modal-footer {
   padding: 10px 16px;
-  background-color: #f9f9f9; 
+  background-color: #f9f9f9;
   color: #333;
   border-top: 1px solid #eee;
   text-align: right;
+  border-bottom-left-radius: 5px; /* Match modal border radius */
+  border-bottom-right-radius: 5px;
 }
-.modal-footer h3 {
+.modal-footer h3 { /* Example if you add content to footer */
   margin: 0;
   font-size: 0.9em;
 }
 /* --- END: Modal CSS --- */
+
+
+/* --- Print styles --- */
+@media print {
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background-color: white !important; /* Ensure white background for printing */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        font-size: 8pt !important; /* Base font size for print */
+    }
+    body.print-active-layout #page-container {
+        display: block !important; /* Override flex */
+        padding: 0 !important;
+        gap: 0 !important;
+    }
+
+    #error-log-panel,
+    .button-container,
+    #pagination-controls,
+    .modal,
+    #edit-macros-button,
+    #csv_file_label,
+    #file_name_display,
+    h1 /* Hide main page title when printing labels */
+    {
+        display: none !important;
+    }
+
+    #main-content-panel {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background-color: white !important;
+    }
+
+    #labels_container {
+        position: static !important; /* Let it flow naturally on print */
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: flex-start !important; /* Align to start for consistent layout on sheet */
+        align-content: flex-start !important;
+        width: 100% !important; /* Take full width of the @page content area */
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        gap: 0 !important; /* No gap for precise alignment on pre-cut labels */
+        orphans: 2; /* Minimum lines at bottom of page before break */
+        widows: 2;  /* Minimum lines at top of page after break */
+    }
+
+    .meal-label {
+        border: 1px solid #ccc !important; /* Or set to none if labels are pre-cut and guides are not needed */
+        padding: 0.02in !important; /* Minimal padding for print */
+        width: 2in !important;  /* Avery 5168/8168 width */
+        height: 4in !important; /* Avery 5168/8168 height (half of a landscape letter page is 4.25in, so 4in is typical label height) */
+        box-sizing: border-box !important;
+        font-size: 8pt !important;
+        overflow: hidden !important;
+        margin: 0 !important; /* No margin for precise alignment */
+        page-break-inside: avoid !important; /* Try to keep each label on one page */
+    }
+     .meal-label-page-break {
+        page-break-after: always !important; /* Force page break after this label */
+    }
+
+
+    .logo-container { height: 0.75in !important; }
+    .logo-container img { max-height: 100% !important; max-width: 90% !important;}
+    .meal-label h3 { font-size: 1em !important; } /* Relative to label's 8pt */
+    .product-info { font-size: 1em !important; }
+    .variant-info { font-size: 0.9em !important; }
+    .modifiers-value { font-size: 0.9em !important; }
+    .meal-label p { font-size: 0.9em !important; }
+    .nutrition-header { font-size: 0.9em !important; }
+    .preparation-header { font-size: 0.9em !important; }
+    .preparation-value { font-size: 0.8em !important; }
+    .vacuum-sealed-message { font-size: 0.75em !important; }
+    .expiry { font-size: 0.8em !important; }
+
+
+    @page {
+        size: letter landscape; /* US Letter, landscape orientation */
+        margin: 0.25in; /* Margin for the entire sheet, adjust based on your labels and printer */
+                       /* For Avery 5168 (2x5 layout of 4"x2" labels on landscape US Letter) this might be ~0.2125in top/bottom, 0.25in left/right */
+                       /* It's often best to test print and adjust */
+    }
+}
