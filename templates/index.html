@@ -283,71 +283,66 @@
         }
 
         function printLabels() {
-            if (!allLabelsData || allLabelsData.length === 0) {
-                alert("No labels to print. Please generate labels first.");
-                return;
+    if (!allLabelsData || allLabelsData.length === 0) {
+        alert("No labels to print. Please generate labels first.");
+        return;
+    }
+
+    const labelsContainer = document.getElementById('labels_container');
+    const paginationControls = document.getElementById('pagination-controls');
+    const errorLogPanel = document.getElementById('error-log-panel');
+
+    // Save original states
+    const originalLabelsContainerContent = labelsContainer.innerHTML;
+    const originalPaginationControlsHTML = paginationControls.innerHTML; // Save HTML to restore listeners later if needed
+    const originalPaginationControlsDisplay = paginationControls.style.display;
+    const originalErrorLogDisplay = errorLogPanel.style.display;
+
+    // Prepare for printing
+    errorLogPanel.style.display = 'none';
+    paginationControls.style.display = 'none';
+    document.body.classList.add('print-active-layout');
+    labelsContainer.innerHTML = ''; // Clear for new print-specific content
+
+    let pageContentHTML = '';
+    allLabelsData.forEach((label, index) => {
+        // Start a new .print-page div for the first label and every `itemsPerPage` thereafter
+        if (index % itemsPerPage === 0) {
+            if (pageContentHTML !== '') { // If there's content for a previous page, close its div
+                labelsContainer.innerHTML += `<div class="print-page">${pageContentHTML}</div>`;
             }
-
-            const originalLabelsContainerContent = document.getElementById('labels_container').innerHTML;
-            const originalPaginationControlsContent = document.getElementById('pagination-controls').innerHTML;
-            const originalPageContainerClass = document.body.className; // Save current body class if any specific for print layout
-
-            const errorLogPanel = document.getElementById('error-log-panel');
-            const originalErrorLogDisplay = errorLogPanel.style.display;
-            errorLogPanel.style.display = 'none'; // Hide error log
-
-            // Prepare main content for printing (e.g. ensure labels_container is directly printable)
-            const mainContentPanel = document.getElementById('main-content-panel');
-            const labelsContainer = document.getElementById('labels_container');
-            const paginationControls = document.getElementById('pagination-controls');
-
-            // Temporarily adjust layout for printing if necessary
-            document.body.classList.add('print-active-layout'); // Add a class to body for specific print CSS adjustments
-
-
-            let allLabelsPrintHTML = '';
-            allLabelsData.forEach((label, index) => {
-                let labelClasses = "meal-label"; // Base class for individual label styling
-                // Add a class for page break *before* the item that starts a new page
-                // Avery 5168 has 2 labels per row, 2 rows per sheet usually (4 labels per sheet).
-                // For 2inx4in labels, 5 across, 2 down = 10 per page. itemsPerPage should reflect this.
-                if (index > 0 && index % itemsPerPage === 0) { // itemsPerPage should be your labels per physical sheet
-                    // This logic adds a page break *container* before the group of labels for the new page
-                    // However, CSS page-break-before on the first element of a new page is more direct.
-                    // The `meal-label-page-break` class used in previous example on the label itself is fine too.
-                    // Let's stick to applying a class to the *first* label of a new "sheet" for page-break-before.
-                    // The provided CSS uses `meal-label-page-break` on the *last* label of a sheet for `page-break-after`.
-                }
-                // For `page-break-after` on the last label of a sheet (except the very last label overall)
-                if ((index + 1) % itemsPerPage === 0 && (index + 1) < allLabelsData.length) {
-                   labelClasses += " meal-label-page-break"; // This class should have `page-break-after: always;`
-                }
-                allLabelsPrintHTML += buildLabelHtmlForPrint(label, globalStorageInstruction, labelClasses);
-            });
-
-            paginationControls.style.display = 'none'; // Hide screen pagination
-            labelsContainer.innerHTML = allLabelsPrintHTML; // Populate with all labels for printing
-
-            setTimeout(function() {
-                window.print();
-
-                // Restore original content and layout
-                document.body.classList.remove('print-active-layout');
-                labelsContainer.innerHTML = originalLabelsContainerContent; // Restore paginated view
-                paginationControls.innerHTML = originalPaginationControlsContent;
-                paginationControls.style.display = 'block'; // Or based on totalPages
-                errorLogPanel.style.display = originalErrorLogDisplay; // Restore error log visibility
-
-                // Re-attach event listeners if pagination controls were entirely rebuilt
-                if (Math.ceil(allLabelsData.length / itemsPerPage) > 1) {
-                    const prevBtn = document.getElementById('prev-page');
-                    const nextBtn = document.getElementById('next-page');
-                    if (prevBtn) prevBtn.addEventListener('click', prevPage);
-                    if (nextBtn) nextBtn.addEventListener('click', nextPage);
-                }
-                updatePaginationInfo(); // Refresh pagination state display
-            }, 250); // Timeout to allow print dialog and rendering
+            pageContentHTML = ''; // Reset/start content for the new page
         }
+        
+        // Use "meal-label" class directly, no need for meal-label-page-break on individual items
+        pageContentHTML += buildLabelHtmlForPrint(label, globalStorageInstruction, "meal-label");
+    });
+
+    if (pageContentHTML !== '') { // Append the last page's content
+        labelsContainer.innerHTML += `<div class="print-page">${pageContentHTML}</div>`;
+    }
+
+    setTimeout(function() {
+        window.print();
+
+        // Restore original content and layout
+        document.body.classList.remove('print-active-layout');
+        labelsContainer.innerHTML = originalLabelsContainerContent; // Restore paginated view
+        
+        // Restore pagination controls and re-attach listeners if necessary
+        paginationControls.innerHTML = originalPaginationControlsHTML;
+        paginationControls.style.display = originalPaginationControlsDisplay;
+        if (Math.ceil(allLabelsData.length / itemsPerPage) > 1 && originalPaginationControlsDisplay !== 'none') {
+            const prevBtn = document.getElementById('prev-page');
+            const nextBtn = document.getElementById('next-page');
+            if (prevBtn) prevBtn.addEventListener('click', prevPage);
+            if (nextBtn) nextBtn.addEventListener('click', nextPage);
+        }
+        updatePaginationInfo(); // Refresh pagination state display
+
+        errorLogPanel.style.display = originalErrorLogDisplay;
+    }, 250); // Timeout to allow print dialog and rendering
+}
 
 
         document.addEventListener('DOMContentLoaded', function() {
