@@ -56,7 +56,7 @@
             let labelClasses = "meal-label";
             return `
                 <div class="${labelClasses}">
-                    <div class="generation-date">${label.expiry_date}</div>
+                    <div class="generation-date">Packed Date: ${label.generation_date}</div>
                     ${label.logo_url ? `<div class="logo-container"><img src="${label.logo_url}" alt="Company Logo"></div>` : ''}
                     <div class="product-info">${label.product}</div>
                     ${label.variant ? `<div class="variant-info">${label.variant}</div>` : ''}
@@ -96,7 +96,7 @@
             // This function is similar to buildLabelHtml but uses customLabelClasses for print-specific needs like page breaks
             return `
                 <div class="${customLabelClasses}">
-                    <div class="generation-date">${label.expiry_date}</div>
+                    <div class="generation-date">Packed Date: ${label.generation_date}</div>
                     ${label.logo_url ? `<div class="logo-container"><img src="${label.logo_url}" alt="Company Logo"></div>` : ''}
                     <div class="product-info">${label.product}</div>
                     ${label.variant ? `<div class="variant-info">${label.variant}</div>` : ''}
