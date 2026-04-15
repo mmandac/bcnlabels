@@ -163,6 +163,22 @@ def process_csv():
                 {"product_name": "Protein Egg Bites (6)", "variant_name": "Default", "count": 1},
                 {"product_name": "Mojo Chicken Thighs & Yellow Jasmine Rice", "variant_name": "Weightloss", "count": 1},
             ],
+            ("low carb -15 pack", "15 meal pack"): [
+                {"product_name": "Balsamic Marinated Tenderloin Steak Tips -TSPK", "variant_name": "Weight Loss", "count": 1},
+                {"product_name": "Blackened Chicken & Shrimp Alfredo -TSPK", "variant_name": "Weight Loss", "count": 1},
+                {"product_name": "Blackened Chicken Tacos -TSPK", "variant_name": "Athlete (3)", "count": 1},
+                {"product_name": "Fit Cheeseburger Bowl -TSPK", "variant_name": "Fit", "count": 1},
+                {"product_name": "Greek Chicken Bowl -TSPK", "variant_name": "Fit", "count": 1},
+                {"product_name": "Ground Beef Taco Bowl #2 -TSPK", "variant_name": "Weight Loss", "count": 1},
+                {"product_name": "Healthy Steak Nachos -TSPK", "variant_name": "Fit", "count": 1},
+                {"product_name": "Honey Garlic Sticky Chicken -TSPK", "variant_name": "Weight Loss", "count": 1},
+                {"product_name": "Korean Ground Beef -TSPK", "variant_name": "Weight Loss", "count": 1},
+                {"product_name": "Surf & Turf Chimichurri Steak & Shrimp -TSPK", "variant_name": "Weight Loss", "count": 1},
+                {"product_name": "Protein Egg Bites (6)", "variant_name": "Default", "count": 2},
+                {"product_name": "Blueberry Muffin Bites (8)", "variant_name": "Fit", "count": 1},
+                {"product_name": "Blueberry Protein Muffin Bites (4) & Turkey Sausage (2)", "variant_name": "Fit", "count": 1},
+                {"product_name": "Egg & Bacon Breakfast Flatbread", "variant_name": "Weight Loss", "count": 1},
+            ],
         }
 
         for row in reader:
