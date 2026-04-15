@@ -150,7 +150,19 @@ def process_csv():
                 {"product_name": "Chocolate Chip Protein Muffin Bites (8)", "variant_name": "Fit", "count": 1},
                 {"product_name": "Shepherds Pie -TSPK", "variant_name": "Fit", "count": 1},
                 {"product_name": "Healthy Chicken Penne Alfredo -TSPK", "variant_name": "Weight Loss", "count": 1},
-            ]
+            ],
+            ("the basics -10 pack", "10 meal pack"): [
+                {"product_name": "Blackened Chicken & Yellow Rice", "variant_name": "Weight Loss", "count": 1},
+                {"product_name": "Buffalo Chicken & Yellow Rice", "variant_name": "Weight Loss", "count": 1},
+                {"product_name": "Lean Ground Beef Dirty Rice", "variant_name": "Weight Loss", "count": 1},
+                {"product_name": "Balsamic Tenderloin Steak Tips & White Jasmine Rice", "variant_name": "Weightloss", "count": 1},
+                {"product_name": "Carne Asada & Yellow Rice", "variant_name": "Weightloss", "count": 1},
+                {"product_name": "Balsamic Steak Tips & Sweet Potatoes", "variant_name": "Weight Loss", "count": 1},
+                {"product_name": "Chicken Meatballs & Yellow Rice", "variant_name": "Weight Loss", "count": 1},
+                {"product_name": "Egg & Bacon Breakfast Flatbread", "variant_name": "Weight Loss", "count": 1},
+                {"product_name": "Protein Egg Bites (6)", "variant_name": "Default", "count": 1},
+                {"product_name": "Mojo Chicken Thighs & Yellow Jasmine Rice", "variant_name": "Weightloss", "count": 1},
+            ],
         }
 
         for row in reader:
